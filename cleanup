@@ -1,0 +1,21 @@
+#!/bin/bash
+# $1 = Имя проекта.
+# $2 = Домашняя директория.
+# $3 = Директория исходников.
+#
+# Деинсталляция файлов.
+rm -f $2/.$1/$1
+rm -f $2/.local/share/icons/hicolor/128x128/apps/$1.png
+rm -f $2/.local/share/applications/$1.desktop
+# Единовременная замена пути к исходникам и имени проекта в файле генератора документации на трафатеры.
+if grep -Fq $3 $3/Doxyfile
+then
+    sed -i -e "s=$3=SPTH=g" $3/Doxyfile
+    sed -i -e "s=$1=PRJNAME=g" $3/Doxyfile
+fi
+# Единовременная замена пути к домашней папке и имени проекта в файле ярлыка на трафатеры.
+if grep -Fq $2 $3/$1.desktop
+then
+    sed -i -e "s=$2=HOME=g" $3/$1.desktop
+    sed -i -e "s=$1=PRJNAME=g" $3/$1.desktop
+fi
