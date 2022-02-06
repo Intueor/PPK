@@ -85,8 +85,8 @@ public:
 													///< \param[in] p_ptLogMutex Указатель на сторонний мьютекс или nullptr для сброса на внутренний.
 
 private:
-	pthread_mutex_t ptLogMutex = PTHREAD_MUTEX_INITIALIZER;
-	pthread_mutex_t* _p_ptLogMutex;
+	pthread_mutex_t ptLogMutex = PTHREAD_MUTEX_INITIALIZER; ///< Объект мьютекса по умолчанию.
+	pthread_mutex_t* _p_ptLogMutex; ///< Указатель на текущий мьютекс.
 };
 
 #endif // LOGGER_H
