@@ -1,9 +1,9 @@
 [Desktop Entry]
 Name=ППК
 Version=0.1.0
-Exec=/home/ivan/.PPK/PPK
+Exec=HOME/.PRJNAME/PRJNAME
 Comment=
-Icon=/home/ivan/.local/share/icons/hicolor/128x128/apps/PPK.png
+Icon=HOME/.local/share/icons/hicolor/128x128/apps/PRJNAME.png
 Type=Application
 Terminal=false
 StartupNotify=true

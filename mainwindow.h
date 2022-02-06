@@ -11,7 +11,8 @@
 #include "logger.h"
 
 //== МАКРОСЫ.
-#define SETTINGS_NAME	"settings.ini"
+//! \file mainwindow.h
+#define SETTINGS_NAME	"settings.ini" ///< Имя файла настроек.
 
 //== ПРОСТРАНСТВА ИМЁН.
 QT_BEGIN_NAMESPACE

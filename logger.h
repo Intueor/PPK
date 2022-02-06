@@ -17,6 +17,7 @@
 #include <sstream>
 
 //== МАКРОСЫ.
+//! \file logger.h
 #define Log(p_lgr, cat, msg, ...)		p_lgr->SendMsg(cat, msg, ##__VA_ARGS__) ///< Логирование по указателю, ... - уровень логирования.
 #define LogS(p_lgr, cat, msg, ...)		{ std::stringstream ss; ss << msg; p_lgr->SendMsg(cat, ss.str(), ##__VA_ARGS__); } ///< Логирование по указателю через строковый поток, ... - уровень логирования.
 
@@ -31,8 +32,8 @@ private:
 #ifdef WIN32
 	/// Замена аналогичной функции на Linux`e.
 	int gettimeofday(timeval* p_tp, struct p_timezone*);
-													///< \param[in] p_tp Указатель на структуру для заполнения.
-													///< \param[out] Успех или нет (0/-1).
+													///< \param[in,out] p_tp Указатель на структуру для заполнения.
+													///< \return Успех или нет (0/-1).
 #endif
 
 public:
@@ -53,7 +54,7 @@ public:
 													///< \param[in] iLogLevel Уровень логирования.
 	/// Получение текущего уровня логирования.
 	int LogLevel() const;
-													///< \param[out] Уровень логирования.
+													///< \return Уровень логирования.
 
 private:
 	std::fstream oLogFileStream; ///< Файловый поток.

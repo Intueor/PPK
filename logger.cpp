@@ -3,8 +3,6 @@
 
 //== МАКРОСЫ.
 #define LOG_FILE_EXT		".log"
-#define RETVAL_OK           0
-#define RETVAL_ERR          -1
 #ifndef WIN32
 #define MSleep(val)         usleep(val * 1000)
 #else
