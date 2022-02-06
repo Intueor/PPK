@@ -1,3 +1,4 @@
+//== ВКЛЮЧЕНИЯ.
 #include "mainwindow.h"
 #include <QApplication>
 

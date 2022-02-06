@@ -1,11 +1,11 @@
-Для корректной сборки и обслуживания проекта на Linux требуется отредактировать параметры проекта.
+Для корректной сборки и обслуживания проекта на Linux требуется отредактировать параметры проекта для всех типов сборки.
 Сборка:
     + Этап сборки:
 	Команда:		    /usr/bin/bash
-	Параметры:		    %{sourceDir}/deployment %{ActiveProject:Name} %{Env:HOME} %{ActiveProject:BuildConfig:Path} %{CurrentDocument:Path}
+	Параметры:		    %{sourceDir}/deployment %{ActiveProject:Name} %{Env:HOME} %{ActiveProject:BuildConfig:Path} %{ActiveProject:Path}
     + Этап очистки:
 	Команда:		    /usr/bin/bash
-	Параметры:		    %{sourceDir}/cleanup %{ActiveProject:Name} %{Env:HOME} %{CurrentDocument:Path}
+	Параметры:		    %{sourceDir}/cleanup %{ActiveProject:Name} %{Env:HOME} %{ActiveProject:Path}
 Запуск:
     Рабочий каталог:		    %{Env:HOME}/.%{ActiveProject:Name}/
 

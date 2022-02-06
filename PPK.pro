@@ -3,11 +3,16 @@ QT += core gui widgets
 CONFIG += c++14
 
 SOURCES += \
+    logger.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
-    mainwindow.h
+    logger.h \
+    mainwindow.h \
+    rapidxml/rapidxml.hpp \
+    rapidxml/rapidxml_print.hpp \
+    rapidxml/rapidxml_utils.hpp
 
 FORMS += \
     mainwindow.ui

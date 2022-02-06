@@ -2,6 +2,16 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSettings>
+#include <memory>
+
+#include "rapidxml/rapidxml.hpp"
+#include "rapidxml/rapidxml_print.hpp"
+#include "rapidxml/rapidxml_utils.hpp"
+#include "logger.h"
+
+//== МАКРОСЫ.
+#define SETTINGS_NAME	"settings.ini"
 
 //== ПРОСТРАНСТВА ИМЁН.
 QT_BEGIN_NAMESPACE
@@ -22,6 +32,9 @@ public:
 	~MainWindow();
 
 private:
-	Ui::MainWindow* p_UI; ///< Указатель на объект пользовательского интерфейса.
+	std::unique_ptr<Ui::MainWindow> up_UI; ///< Указатель на объект пользовательского интерфейса.
+	std::unique_ptr<rapidxml::xml_document<>> up_docDB; ///< Указатель на документ базы данных.
+	std::unique_ptr<QSettings> up_QSettings; ///< Указатель на установки приложения.
+	std::unique_ptr<Logger> up_Logger; ///< Указатель на логгер.
 };
 #endif // MAINWINDOW_H
