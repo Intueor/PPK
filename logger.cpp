@@ -1,5 +1,8 @@
 //== ВКЛЮЧЕНИЯ.
 #include "logger.h"
+#ifndef WIN32
+#include <unistd.h>
+#endif
 
 //== МАКРОСЫ.
 #define LOG_FILE_EXT		".log"
@@ -74,3 +77,22 @@ void Logger::ChangeLogLevel(uint8_t iLogLevel) { _iLogLevel = iLogLevel; }
 // Получение текущего уровня логирования.
 int Logger::LogLevel() const { return _iLogLevel; }
 
+//== Класс потокобезопасного логгера.
+// Конструктор.
+TLogger::TLogger(const std::string& r_strLogPath, const std::string& r_strLogName, int iLogLevel) : Logger(r_strLogPath, r_strLogName, iLogLevel), _p_ptLogMutex(&ptLogMutex) {}
+
+// Потокобезопасная отправка сообщения в лог.
+void TLogger::SendMsg(LogCat eLogCat, const std::string& r_strMsg, int uchLevel)
+{
+	MSleep(0);
+	pthread_mutex_lock(_p_ptLogMutex);
+	Logger::SendMsg(eLogCat, r_strMsg, uchLevel);
+	pthread_mutex_unlock(_p_ptLogMutex);
+}
+
+// Установка стороннего мьютекса или сброс на внутренний при nullptr.
+void TLogger::SetMutex(pthread_mutex_t* p_ptLogMutex)
+{
+	if(p_ptLogMutex == nullptr) _p_ptLogMutex = &ptLogMutex;
+	else _p_ptLogMutex = p_ptLogMutex;
+}
