@@ -3,8 +3,9 @@ QT += core gui widgets
 CONFIG += c++14
 
 win32 {
-LIBS += ../PPK/pthread/lib/pthreadVC2.lib
-CONFIG += console
+	LIBS += ..\\PPK\\pthread\\lib\\pthread_static_lib.lib
+	CONFIG += console
+	QMAKE_LFLAGS_DEBUG += /NODEFAULTLIB:MSVCRT
 }
 
 SOURCES += \
@@ -15,8 +16,10 @@ SOURCES += \
 HEADERS += \
 	logger.h \
 	mainwindow.h \
+	pthread/include/_ptw32.h \
 	pthread/include/pthread.h \
 	pthread/include/sched.h \
+	pthread/include/semaphore.h \
 	pthread/include/semaphore.h \
 	rapidxml/rapidxml.hpp \
 	rapidxml/rapidxml_print.hpp \
@@ -34,10 +37,7 @@ DISTFILES += \
 	cleanup \
 	deployment \
 	linux_project_settings.txt \
-	pthread/lib/pthreadVC2 — копия.lib \
-	pthread/lib/pthreadVC2.lib \
-	pthread/lib/Текстовый документ.txt \
-	pthread/lib/Текстовый документ.txt
+	pthread/lib/pthread_static_lib.lib
 
 RESOURCES += \
 	resources.qrc
