@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <time.h>
 #define	HAVE_STRUCT_TIMESPEC
-#include "./pthread/include/pthread.h"
+#include "pthread/include/pthread.h"
 #endif
 #include <sstream>
 
