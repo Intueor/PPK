@@ -4,6 +4,7 @@
 //== ВКЛЮЧЕНИЯ.
 #include <QMainWindow>
 #include <QSettings>
+#include <QLabel>
 #include <memory>
 
 #include "rapidxml/rapidxml.hpp"
@@ -28,11 +29,12 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 private:
-	std::unique_ptr<Ui::MainWindow> up_UI; ///< Указатель на объект пользовательского интерфейса.
+	Ui::MainWindow* p_UI; ///< Указатель на объект пользовательского интерфейса.
 	std::unique_ptr<rapidxml::xml_document<>> up_docDB; ///< Указатель на документ базы данных.
 	std::shared_ptr<QSettings> sp_Settings; ///< Указатель на установки приложения.
 	std::unique_ptr<Logger> up_Logger; ///< Указатель на логгер.
 	std::unique_ptr<WidgetSerializer> up_WidgetSerializer; ///< Указатель на сериализатор виджетов.
+	QLabel oLabelStatus; ///< Метка статуса.
 
 public:
 	/// Конструктор.
@@ -40,5 +42,9 @@ public:
 										///< \param[in] p_Parent Указатель на родительский виджет.
 	/// Деструктор.
 	~MainWindow();
+
+private slots:
+	/// Обработка пункта "О программе".
+	void on_actionAbout_triggered();
 };
 #endif // MAINWINDOW_H

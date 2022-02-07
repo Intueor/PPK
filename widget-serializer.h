@@ -19,7 +19,7 @@ class WidgetSerializer
 {
 private:
 	std::shared_ptr<QSettings> _sp_Settings; ///< Указатель на объект установок для чтения и записи состояний.
-	QVector<QWidget*> _vpExcludedWidgets; ///< Вектор с указателями на исключаемые из сериализации виджеты.
+	QVector<QWidget*> _vpWidgetsExcluded; ///< Вектор с указателями на исключаемые из сериализации виджеты.
 	// Обрабатываемые типы.
 	QList<QSplitter*> lpSplitters; ///< Лист с указателями на разделители.
 	QList<QRadioButton*> lpRadioButtons; ///< Лист с указателями на переключатели.
@@ -38,15 +38,15 @@ public:
 										///< \param[in] r_Widget Указатель на виджет для работы.
 	/// Регистрация дочерних элементов виджета с исключениями.
 	template <typename T>
-	void RegisterChildren(T* p_Widget, QVector<QWidget*>& r_vpExcludedWidgets);
+	void RegisterChildren(T* p_Widget, QVector<QWidget*>& r_vpWidgetsExcluded);
 										///< \param[in] r_Widget Указатель на виджет для работы.
-										///< \param[in] r_vpExcludedWidgets Ссылка на вектор с указателями на исключаемые из регистрации виджеты.
+										///< \param[in] r_vpWidgetsExcluded Ссылка на вектор с указателями на исключаемые из регистрации виджеты.
 	/// Регистрация дочерних элементов виджета с исключениями из временного объекта.
 	template <typename T>
-	void RegisterChildren(T* p_Widget, QVector<QWidget*>&& r_vpExcludedWidgets)
+	void RegisterChildren(T* p_Widget, QVector<QWidget*>&& r_vpWidgetsExcluded)
 										//! \param[in] r_Widget Указатель на виджет для работы.
-										//! \param[in] r_vpExcludedWidgets Ссылка на временный вектор с указателями на исключаемые из регистрации виджеты.
-	{ RegisterChildren(p_Widget, r_vpExcludedWidgets); }
+										//! \param[in] r_vpWidgetsExcluded Ссылка на временный вектор с указателями на исключаемые из регистрации виджеты.
+	{ RegisterChildren(p_Widget, r_vpWidgetsExcluded); }
 
 	/// Регистрация вектора элементов.
 	void Register(QVector<QWidget*>& vpWidgets)
@@ -95,13 +95,13 @@ void WidgetSerializer::RegisterChildren(T* p_Widget)
 
 // Регистрация дочерних элементов виджета с исключениями.
 template <typename T>
-void WidgetSerializer::RegisterChildren(T* p_Widget, QVector<QWidget*>& r_vpExcludedWidgets)
+void WidgetSerializer::RegisterChildren(T* p_Widget, QVector<QWidget*>& r_vpWidgetsExcluded)
 {
 	RegisterChildren(p_Widget);
 	// Обрабатываемые типы.
-	for(QWidget* p_QWidget : r_vpExcludedWidgets) lpSplitters.removeOne(p_QWidget); // Разделители.
-	for(QWidget* p_QWidget : r_vpExcludedWidgets) lpRadioButtons.removeOne(p_QWidget); // Переключатели.
-	for(QWidget* p_QWidget : r_vpExcludedWidgets) lpLineEdits.removeOne(p_QWidget); // Строчные редакторы.
+	for(QWidget* p_QWidget : r_vpWidgetsExcluded) lpSplitters.removeOne(p_QWidget); // Разделители.
+	for(QWidget* p_QWidget : r_vpWidgetsExcluded) lpRadioButtons.removeOne(p_QWidget); // Переключатели.
+	for(QWidget* p_QWidget : r_vpWidgetsExcluded) lpLineEdits.removeOne(p_QWidget); // Строчные редакторы.
 	// Другие требуемые типы...
 }
 
