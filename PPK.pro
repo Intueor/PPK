@@ -20,10 +20,10 @@ HEADERS += \
 	pthread/include/pthread.h \
 	pthread/include/sched.h \
 	pthread/include/semaphore.h \
-	pthread/include/semaphore.h \
 	rapidxml/rapidxml.hpp \
 	rapidxml/rapidxml_print.hpp \
-	rapidxml/rapidxml_utils.hpp
+	rapidxml/rapidxml_utils.hpp \
+	widget-serializer.h
 
 FORMS += \
 	mainwindow.ui

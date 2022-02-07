@@ -29,6 +29,15 @@ enum LogCat {I, W, E};
 class Logger
 {
 private:
+	std::fstream oLogFileStream; ///< Файловый поток.
+	char m_chLogBuf[80]; ///< Буфер текста времени.
+	char m_chLogMSBuf[8]; ///< Буфер текста миллисекунд.
+	time_t oLogTimeNow; ///< Текущее время.
+	timeval oLogTimeval; ///< Миллисекунды работы лога.
+	std::string strLogName; ///< Имя лога.
+	int _iLogLevel; ///< Уровень логирования.
+
+private:
 #ifdef WIN32
 	/// Замена аналогичной функции на Linux`e.
 	int gettimeofday(timeval* p_tp, struct p_timezone*);
@@ -55,20 +64,15 @@ public:
 	/// Получение текущего уровня логирования.
 	int LogLevel() const;
 													///< \return Уровень логирования.
-
-private:
-	std::fstream oLogFileStream; ///< Файловый поток.
-	char m_chLogBuf[80]; ///< Буфер текста времени.
-	char m_chLogMSBuf[8]; ///< Буфер текста миллисекунд.
-	time_t oLogTimeNow; ///< Текущее время.
-	timeval oLogTimeval; ///< Миллисекунды работы лога.
-	std::string strLogName; ///< Имя лога.
-	int _iLogLevel; ///< Уровень логирования.
 };
 
 /// Класс потокобезопасного логгера.
 class TLogger : public Logger
 {
+private:
+	pthread_mutex_t ptLogMutex = PTHREAD_MUTEX_INITIALIZER; ///< Объект мьютекса по умолчанию.
+	pthread_mutex_t* _p_ptLogMutex; ///< Указатель на текущий мьютекс.
+
 public:
 	/// Конструктор.
 	TLogger(const std::string& r_strLogPath, const std::string& r_strLogName, int iLogLevel = 0);
@@ -83,10 +87,6 @@ public:
 	/// Установка стороннего мьютекса или сброс на внутренний при nullptr.
 	void SetMutex(pthread_mutex_t* p_ptLogMutex = nullptr);
 													///< \param[in] p_ptLogMutex Указатель на сторонний мьютекс или nullptr для сброса на внутренний.
-
-private:
-	pthread_mutex_t ptLogMutex = PTHREAD_MUTEX_INITIALIZER; ///< Объект мьютекса по умолчанию.
-	pthread_mutex_t* _p_ptLogMutex; ///< Указатель на текущий мьютекс.
 };
 
 #endif // LOGGER_H

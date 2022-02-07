@@ -13,32 +13,39 @@ MainWindow::MainWindow(QWidget* p_Parent) : QMainWindow(p_Parent), up_UI(new Ui:
 {
 	up_Logger = make_unique<Logger>("./", "main");
 	up_UI->setupUi(this);
-	up_QSettings = make_unique<QSettings>(SETTINGS_NAME, QSettings::IniFormat);
-	if(up_QSettings->allKeys().count() == 0)
+	sp_QSettings = make_shared<QSettings>(SETTINGS_NAME, QSettings::IniFormat);
+	up_WidgetSerializer = make_unique<WidgetSerializer>(sp_QSettings);
+	up_WidgetSerializer->RegisterChildren(this);
+	if(sp_QSettings->allKeys().count() == 0)
 	{
 		Log(up_Logger, LogCat::W, "Файл настроек не обнаружен, загрузка по умолчанию");
 	}
 	else
 	{
-		Log(up_Logger, LogCat::I, "Файл настроек загружен", 3);
+		up_Logger->ChangeLogLevel(sp_QSettings->value("LogLevel").toInt());
+		LogS(up_Logger, LogCat::I, "Уровень логирования: " << up_Logger->LogLevel(), 1);
+		up_WidgetSerializer->LoadStates(this);
+		Log(up_Logger, LogCat::I, "Файл настроек загружен и применён.", 2);
 	}
 }
 
 // Деструктор.
 MainWindow::~MainWindow()
 {
-	up_QSettings->setValue("LogLevel", up_Logger->LogLevel());
-	up_QSettings->sync();
-	QSettings::Status eStatus = up_QSettings->status();
-	switch(eStatus)
+	sp_QSettings->setValue("LogLevel", up_Logger->LogLevel());
+	up_WidgetSerializer->SaveStates(this);
+	sp_QSettings->sync();
+	switch(sp_QSettings->status())
 	{
 		case QSettings::NoError:
+			Log(up_Logger, LogCat::I, "Настройки сохранены в файл.", 2);
+			Log(up_Logger, LogCat::I, "Завершение работы.", 2);
 			break;
 		case QSettings::AccessError:
-			Log(up_Logger, LogCat::E, "Ошибка доступа к файлу настроек");
+			Log(up_Logger, LogCat::E, "Ошибка доступа к файлу настроек.");
 			break;
 		case QSettings::FormatError:
-			Log(up_Logger, LogCat::E, "Ошибка формата файла настроек");
+			Log(up_Logger, LogCat::E, "Ошибка формата файла настроек.");
 			break;
 	}
 }
