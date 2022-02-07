@@ -18,19 +18,19 @@
 class WidgetSerializer
 {
 private:
-	std::shared_ptr<QSettings> _sp_QSettings; ///< Указатель на объект установок для чтения и записи состояний.
+	std::shared_ptr<QSettings> _sp_Settings; ///< Указатель на объект установок для чтения и записи состояний.
 	QVector<QWidget*> _vpExcludedWidgets; ///< Вектор с указателями на исключаемые из сериализации виджеты.
 	// Обрабатываемые типы.
-	QList<QSplitter*> lpQSplitters; ///< Лист с указателями на разделители.
-	QList<QRadioButton*> lpQRadioButtons; ///< Лист с указателями на переключатели.
-	QList<QLineEdit*> lpQLineEdits; ///< Лист с указателями на редактируемые строки.
+	QList<QSplitter*> lpSplitters; ///< Лист с указателями на разделители.
+	QList<QRadioButton*> lpRadioButtons; ///< Лист с указателями на переключатели.
+	QList<QLineEdit*> lpLineEdits; ///< Лист с указателями на редактируемые строки.
 	// Другие требуемые типы...
 
 public:
 	/// Конструктор.
-	WidgetSerializer(std::shared_ptr<QSettings> p_QSettings)
-										//! \param[in] p_QSettings Указатель на настройки.
-		: _sp_QSettings(p_QSettings) {}
+	WidgetSerializer(std::shared_ptr<QSettings> p_Settings)
+										//! \param[in] p_Settings Указатель на настройки.
+		: _sp_Settings(p_Settings) {}
 
 	/// Регистрация дочерних элементов виджета.
 	template <typename T>
@@ -56,9 +56,9 @@ public:
 		{
 			QString strType = p_Widget->metaObject()->className();
 			// Обрабатываемые типы.
-			if(strType == "QSplitter") lpQSplitters.append(static_cast<QSplitter*>(p_Widget)); // Разделители.
-			else if(strType == "QRadioButton") lpQRadioButtons.append(static_cast<QRadioButton*>(p_Widget)); // Переключатели.
-			else if(strType == "QLineEdit") lpQLineEdits.append(static_cast<QLineEdit*>(p_Widget)); // Строчные редакторы.
+			if(strType == "QSplitter") lpSplitters.append(static_cast<QSplitter*>(p_Widget)); // Разделители.
+			else if(strType == "QRadioButton") lpRadioButtons.append(static_cast<QRadioButton*>(p_Widget)); // Переключатели.
+			else if(strType == "QLineEdit") lpLineEdits.append(static_cast<QLineEdit*>(p_Widget)); // Строчные редакторы.
 			// Другие требуемые типы...
 		}
 	}
@@ -72,7 +72,7 @@ public:
 	template <typename T>
 	void LoadStates(T* p_Widget, bool bIncludeMainStates = true);
 										///< \param[in] r_Widget Указатель на виджет для работы.
-										///< \param[in] bIncludeMainStates true - включиить в загрузку данные по основному виджету.
+										///< \param[in] bIncludeMainStates true - включить в загрузку данные по основному виджету.
 	/// Запись состояний в настройки.
 	template <typename T>
 	void SaveStates(const T* p_Widget, bool bIncludeMainStates = true);
@@ -87,9 +87,9 @@ template <typename T>
 void WidgetSerializer::RegisterChildren(T* p_Widget)
 {
 	// Обрабатываемые типы.
-	lpQSplitters = p_Widget->template findChildren<QSplitter*>(); // Разделители.
-	lpQRadioButtons = p_Widget->template findChildren<QRadioButton*>(); // Переключатели.
-	lpQLineEdits = p_Widget->template findChildren<QLineEdit*>(); // Строчные редакторы.
+	lpSplitters = p_Widget->template findChildren<QSplitter*>(); // Разделители.
+	lpRadioButtons = p_Widget->template findChildren<QRadioButton*>(); // Переключатели.
+	lpLineEdits = p_Widget->template findChildren<QLineEdit*>(); // Строчные редакторы.
 	// Другие требуемые типы...
 }
 
@@ -99,9 +99,9 @@ void WidgetSerializer::RegisterChildren(T* p_Widget, QVector<QWidget*>& r_vpExcl
 {
 	RegisterChildren(p_Widget);
 	// Обрабатываемые типы.
-	for(QWidget* p_QWidget : r_vpExcludedWidgets) lpQSplitters.removeOne(p_QWidget); // Разделители.
-	for(QWidget* p_QWidget : r_vpExcludedWidgets) lpQRadioButtons.removeOne(p_QWidget); // Переключатели.
-	for(QWidget* p_QWidget : r_vpExcludedWidgets) lpQLineEdits.removeOne(p_QWidget); // Строчные редакторы.
+	for(QWidget* p_QWidget : r_vpExcludedWidgets) lpSplitters.removeOne(p_QWidget); // Разделители.
+	for(QWidget* p_QWidget : r_vpExcludedWidgets) lpRadioButtons.removeOne(p_QWidget); // Переключатели.
+	for(QWidget* p_QWidget : r_vpExcludedWidgets) lpLineEdits.removeOne(p_QWidget); // Строчные редакторы.
 	// Другие требуемые типы...
 }
 
@@ -113,28 +113,28 @@ void WidgetSerializer::LoadStates(T* p_Widget, bool bIncludeMainStates)
 	if(bIncludeMainStates)
 	{
 		// Основной виджет.
-		p_Widget->restoreGeometry(_sp_QSettings->value(MkWidgetName(strWName, "G")).toByteArray());
-		p_Widget->restoreState(_sp_QSettings->value(MkWidgetName(strWName, "S")).toByteArray());
+		p_Widget->restoreGeometry(_sp_Settings->value(MkWidgetName(strWName, "G")).toByteArray());
+		p_Widget->restoreState(_sp_Settings->value(MkWidgetName(strWName, "S")).toByteArray());
 	}
 	QVariant oVariant;
 	// Обрабатываемые типы.
 	// Дочерние разделители.
-	for(QSplitter* p_QSplitter : lpQSplitters)
+	for(QSplitter* p_Splitter : lpSplitters)
 	{
-		p_QSplitter->restoreGeometry(_sp_QSettings->value(MkChildName(strWName, p_QSplitter->objectName(), "G")).toByteArray());
-		p_QSplitter->restoreState(_sp_QSettings->value(MkChildName(strWName, p_QSplitter->objectName(), "S")).toByteArray());
+		p_Splitter->restoreGeometry(_sp_Settings->value(MkChildName(strWName, p_Splitter->objectName(), "G")).toByteArray());
+		p_Splitter->restoreState(_sp_Settings->value(MkChildName(strWName, p_Splitter->objectName(), "S")).toByteArray());
 	}
 	// Дочерние переключатели.
-	for(QRadioButton* p_QRadioButton : lpQRadioButtons)
+	for(QRadioButton* p_RadioButton : lpRadioButtons)
 	{
-		oVariant = _sp_QSettings->value(MkChildName(strWName, p_QRadioButton->objectName(), "V"));
-		if(!oVariant.isNull()) p_QRadioButton->setChecked(oVariant.toBool());
+		oVariant = _sp_Settings->value(MkChildName(strWName, p_RadioButton->objectName(), "V"));
+		if(!oVariant.isNull()) p_RadioButton->setChecked(oVariant.toBool());
 	}
 	// Дочерние строчные редакторы.
-	for(QLineEdit* p_QLineEdit : lpQLineEdits)
+	for(QLineEdit* p_LineEdit : lpLineEdits)
 	{
-		oVariant = _sp_QSettings->value(MkChildName(strWName, p_QLineEdit->objectName(), "T"));
-		if(!oVariant.isNull()) p_QLineEdit->setText(oVariant.toString());
+		oVariant = _sp_Settings->value(MkChildName(strWName, p_LineEdit->objectName(), "T"));
+		if(!oVariant.isNull()) p_LineEdit->setText(oVariant.toString());
 	}
 	// Другие требуемые типы...
 }
@@ -147,25 +147,25 @@ void WidgetSerializer::SaveStates(const T* p_Widget, bool bIncludeMainStates)
 	if(bIncludeMainStates)
 	{
 		// Основной виджет.
-		_sp_QSettings->setValue(MkWidgetName(strWName, "G"), p_Widget->saveGeometry());
-		_sp_QSettings->setValue(MkWidgetName(strWName, "S"), p_Widget->saveState());
+		_sp_Settings->setValue(MkWidgetName(strWName, "G"), p_Widget->saveGeometry());
+		_sp_Settings->setValue(MkWidgetName(strWName, "S"), p_Widget->saveState());
 	}
 	// Обрабатываемые типы.
 	// Дочерние разделители.
-	for(QSplitter* p_QSplitter : lpQSplitters)
+	for(QSplitter* p_Splitter : lpSplitters)
 	{
-		_sp_QSettings->setValue(MkChildName(strWName, p_QSplitter->objectName(), "G"), p_QSplitter->saveGeometry());
-		_sp_QSettings->setValue(MkChildName(strWName, p_QSplitter->objectName(), "S"), p_QSplitter->saveState());
+		_sp_Settings->setValue(MkChildName(strWName, p_Splitter->objectName(), "G"), p_Splitter->saveGeometry());
+		_sp_Settings->setValue(MkChildName(strWName, p_Splitter->objectName(), "S"), p_Splitter->saveState());
 	}
 	// Дочерние переключатели.
-	for(QRadioButton* p_QRadioButton : lpQRadioButtons)
+	for(QRadioButton* p_RadioButton : lpRadioButtons)
 	{
-		_sp_QSettings->setValue(MkChildName(strWName, p_QRadioButton->objectName(), "V"), p_QRadioButton->isChecked());
+		_sp_Settings->setValue(MkChildName(strWName, p_RadioButton->objectName(), "V"), p_RadioButton->isChecked());
 	}
 	// Дочерние строчные редакторы.
-	for(QLineEdit* p_QLineEdit : lpQLineEdits)
+	for(QLineEdit* p_LineEdit : lpLineEdits)
 	{
-		_sp_QSettings->setValue(MkChildName(strWName, p_QLineEdit->objectName(), "T"), p_QLineEdit->text());
+		_sp_Settings->setValue(MkChildName(strWName, p_LineEdit->objectName(), "T"), p_LineEdit->text());
 	}
 	// Другие требуемые типы...
 }
