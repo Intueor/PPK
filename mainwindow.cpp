@@ -7,7 +7,7 @@
 #define ST(m)			oLabelStatus.setText(m)
 #define SM(m)			p_UI->statusbar->showMessage(m, STATUS_DELAY)
 
-//== ПРОСТРАНСТВА ИМЁН.
+//== ПРОСТРАНСТВА ИМЁН.SETTINGS_NAME, QSettings::IniFormat
 using namespace rapidxml;
 using namespace std;
 
@@ -17,15 +17,15 @@ using namespace std;
 MainWindow::MainWindow(QWidget* p_WidgetParent) : QMainWindow(p_WidgetParent), p_UI(new Ui::MainWindow)
 {
 	p_UI->setupUi(this);
+	p_Settings = new QSettings(SETTINGS_NAME, QSettings::IniFormat);
 	up_Logger = make_unique<Logger>("./", "main");
 	ST("Загрузка настроек...");
 	p_UI->statusbar->addPermanentWidget(&oLabelStatus);
-	sp_Settings = make_shared<QSettings>(SETTINGS_NAME, QSettings::IniFormat);
-	up_WidgetsSerializer = make_unique<WidgetsSerializer>(sp_Settings);
+	up_WidgetsSerializer = make_unique<WidgetsSerializer>(*p_Settings);
 	// Загрузка настроек.
 	up_WidgetsSerializer->RegisterChildren(*this);
 	up_WidgetsSerializer->RegisterChildren(oDialogSettings);
-	if(sp_Settings->allKeys().count() == 0)
+	if(p_Settings->allKeys().count() == 0)
 	{
 		Log(up_Logger, LogCat::W, "Файл настроек не обнаружен, загрузка по умолчанию");
 		SM("Настройки не загружены, будут созданы новые.");
@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget* p_WidgetParent) : QMainWindow(p_WidgetParent), p
 	{
 		up_WidgetsSerializer->LoadStates(*this);
 		up_WidgetsSerializer->LoadStates(oDialogSettings, false);
-		up_Logger->ChangeLogLevel(sp_Settings->value("DialogSettings-spinBoxLogLevel-V").toInt());
+		up_Logger->ChangeLogLevel(p_Settings->value("DialogSettings-spinBoxLogLevel-V").toInt());
 		LogS(up_Logger, LogCat::I, "Уровень логирования: " << up_Logger->LogLevel(), 1);
 		Log(up_Logger, LogCat::I, "Файл настроек загружен и применён.", 2);
 		SM("Настройки загружены.");
@@ -48,8 +48,8 @@ MainWindow::~MainWindow()
 	up_WidgetsSerializer->SaveStates(*this);
 	up_WidgetsSerializer->SaveStates(oDialogSettings, false);
 	ST("Сохранение настроек...");
-	sp_Settings->sync();
-	switch(sp_Settings->status())
+	p_Settings->sync();
+	switch(p_Settings->status())
 	{
 		case QSettings::NoError:
 			Log(up_Logger, LogCat::I, "Настройки сохранены в файл.", 2);
@@ -64,6 +64,7 @@ MainWindow::~MainWindow()
 	}
 	SM("Настройки сохранены.");
 	ST("Выход...");
+	delete p_Settings;
 	delete p_UI;
 }
 

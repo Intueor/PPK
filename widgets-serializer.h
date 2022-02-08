@@ -21,7 +21,7 @@
 class WidgetsSerializer
 {
 private:
-	std::shared_ptr<QSettings> _sp_Settings; ///< Указатель на объект установок для чтения и записи состояний.
+	QSettings& _r_Settings; ///< Ссылка на объект установок для чтения и записи состояний.
 	QVector<QWidget*> _vpWidgetsExcluded; ///< Вектор с указателями на исключаемые из сериализации виджеты.
 	// Обрабатываемые типы.
 	QMap<QString, QSet<QSplitter*>> mpWNameToSplitters; ///< Мап имён виджетов к сету указателей на разделители.
@@ -77,15 +77,10 @@ private:
 	}
 
 public:
-	/// Конструктор от разделяемого указателя.
-	WidgetsSerializer(std::shared_ptr<QSettings> sp_Settings)
-										//! \param[in] sp_Settings Указатель на настройки.
-		: _sp_Settings(sp_Settings) {}
-
 	/// Конструктор.
 	WidgetsSerializer(QSettings& r_Settings)
 										//! \param[in] r_Settings Ссылка на настройки.
-		: _sp_Settings(std::make_shared<QSettings>(&r_Settings)) {}
+		: _r_Settings(r_Settings) {}
 
 	/// Регистрация дочерних элементов виджета.
 	template <typename T>
@@ -178,31 +173,31 @@ template <typename T>
 void WidgetsSerializer::LoadStates(T& r_Widget, bool bIncludeMainGeometry)
 {
 	QString strWName = r_Widget.objectName();
-	if(bIncludeMainGeometry) r_Widget.restoreGeometry(_sp_Settings->value(MkWidgetName(strWName, "G")).toByteArray());
+	if(bIncludeMainGeometry) r_Widget.restoreGeometry(_r_Settings.value(MkWidgetName(strWName, "G")).toByteArray());
 	QVariant oVariant;
 	// Обрабатываемые типы.
 	// Дочерние разделители.
 	for(QSplitter* p_Splitter : mpWNameToSplitters[strWName])
 	{
-		p_Splitter->restoreGeometry(_sp_Settings->value(MkChildName(strWName, p_Splitter->objectName(), "G")).toByteArray());
-		p_Splitter->restoreState(_sp_Settings->value(MkChildName(strWName, p_Splitter->objectName(), "S")).toByteArray());
+		p_Splitter->restoreGeometry(_r_Settings.value(MkChildName(strWName, p_Splitter->objectName(), "G")).toByteArray());
+		p_Splitter->restoreState(_r_Settings.value(MkChildName(strWName, p_Splitter->objectName(), "S")).toByteArray());
 	}
 	// Дочерние переключатели.
 	for(QRadioButton* p_RadioButton : mpWNameToRadioButtons[strWName])
 	{
-		oVariant = _sp_Settings->value(MkChildName(strWName, p_RadioButton->objectName(), "V"));
+		oVariant = _r_Settings.value(MkChildName(strWName, p_RadioButton->objectName(), "V"));
 		if(!oVariant.isNull()) p_RadioButton->setChecked(oVariant.toBool());
 	}
 	// Дочерние строчные редакторы.
 	for(QLineEdit* p_LineEdit : mpWNameToLineEdits[strWName])
 	{
-		oVariant = _sp_Settings->value(MkChildName(strWName, p_LineEdit->objectName(), "V"));
+		oVariant = _r_Settings.value(MkChildName(strWName, p_LineEdit->objectName(), "V"));
 		if(!oVariant.isNull()) p_LineEdit->setText(oVariant.toString());
 	}
 	// Дочерние строчные cпинбоксы.
 	for(QSpinBox* p_SpinBox : mpWNameToSpinBoxes[strWName])
 	{
-		oVariant = _sp_Settings->value(MkChildName(strWName, p_SpinBox->objectName(), "V"));
+		oVariant = _r_Settings.value(MkChildName(strWName, p_SpinBox->objectName(), "V"));
 		if(!oVariant.isNull()) p_SpinBox->setValue(oVariant.toInt());
 	}
 	// Другие требуемые типы...
@@ -213,28 +208,28 @@ template <typename T>
 void WidgetsSerializer::SaveStates(const T& r_Widget, bool bIncludeMainGeometry)
 {
 	QString strWName = r_Widget.objectName();
-	if(bIncludeMainGeometry) _sp_Settings->setValue(MkWidgetName(strWName, "G"), r_Widget.saveGeometry());
+	if(bIncludeMainGeometry) _r_Settings.setValue(MkWidgetName(strWName, "G"), r_Widget.saveGeometry());
 	// Обрабатываемые типы.
 	// Дочерние разделители.
 	for(QSplitter* p_Splitter : mpWNameToSplitters[strWName])
 	{
-		_sp_Settings->setValue(MkChildName(strWName, p_Splitter->objectName(), "G"), p_Splitter->saveGeometry());
-		_sp_Settings->setValue(MkChildName(strWName, p_Splitter->objectName(), "S"), p_Splitter->saveState());
+		_r_Settings.setValue(MkChildName(strWName, p_Splitter->objectName(), "G"), p_Splitter->saveGeometry());
+		_r_Settings.setValue(MkChildName(strWName, p_Splitter->objectName(), "S"), p_Splitter->saveState());
 	}
 	// Дочерние переключатели.
 	for(QRadioButton* p_RadioButton : mpWNameToRadioButtons[strWName])
 	{
-		_sp_Settings->setValue(MkChildName(strWName, p_RadioButton->objectName(), "V"), p_RadioButton->isChecked());
+		_r_Settings.setValue(MkChildName(strWName, p_RadioButton->objectName(), "V"), p_RadioButton->isChecked());
 	}
 	// Дочерние строчные редакторы.
 	for(QLineEdit* p_LineEdit : mpWNameToLineEdits[strWName])
 	{
-		_sp_Settings->setValue(MkChildName(strWName, p_LineEdit->objectName(), "V"), p_LineEdit->text());
+		_r_Settings.setValue(MkChildName(strWName, p_LineEdit->objectName(), "V"), p_LineEdit->text());
 	}
 	// Дочерние cпинбоксы.
 	for(QSpinBox* p_SpinBox : mpWNameToSpinBoxes[strWName])
 	{
-		_sp_Settings->setValue(MkChildName(strWName, p_SpinBox->objectName(), "V"), p_SpinBox->value());
+		_r_Settings.setValue(MkChildName(strWName, p_SpinBox->objectName(), "V"), p_SpinBox->value());
 	}
 	// Другие требуемые типы...
 }
