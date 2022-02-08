@@ -11,6 +11,7 @@
 #include <QSpinBox>
 #include <QMap>
 #include <QSet>
+#include <QTabWidget>
 
 //== МАКРОСЫ.
 #define MkWidgetName(widget,suffix)				widget+"-"+suffix
@@ -28,6 +29,7 @@ private:
 	QMap<QString, QSet<QRadioButton*>> mpWNameToRadioButtons; ///< Мап имён виджетов к сету указателей на переключатели.
 	QMap<QString, QSet<QLineEdit*>> mpWNameToLineEdits; ///< Мап имён виджетов к сету указателей на редактируемые строки.
 	QMap<QString, QSet<QSpinBox*>> mpWNameToSpinBoxes; ///< Мап имён виджетов к сету указателей на спинбоксы.
+	QMap<QString, QSet<QTabWidget*>> mpWNameToTabWidgets; ///< Мап имён виджетов к сету указателей на картотеки.
 	// Другие требуемые типы...
 
 private:
@@ -113,6 +115,7 @@ public:
 			else if(strType == "QRadioButton") mpWNameToRadioButtons[strWName].insert(static_cast<QRadioButton*>(r_Widget)); // Переключатели.
 			else if(strType == "QLineEdit") mpWNameToLineEdits[strWName].insert(static_cast<QLineEdit*>(r_Widget)); // Строчные редакторы.
 			else if(strType == "QSpinBox") mpWNameToSpinBoxes[strWName].insert(static_cast<QSpinBox*>(r_Widget)); // Спинбоксы.
+			else if(strType == "QTabWidget") mpWNameToTabWidgets[strWName].insert(static_cast<QTabWidget*>(r_Widget)); // Картотеки.
 			// Другие требуемые типы...
 		}
 	}
@@ -148,6 +151,7 @@ void WidgetsSerializer::RegisterChildren(const T& r_Widget)
 	mpWNameToRadioButtons[strWName] += MakeChildrenListOfType<QRadioButton*>(r_Widget); // Переключатели.
 	mpWNameToLineEdits[strWName] += MakeChildrenListOfType<QLineEdit*>(r_Widget, {"QSpinBox"}); // Строчные редакторы, кроме детей QSpinBox.
 	mpWNameToSpinBoxes[strWName] += MakeChildrenListOfType<QSpinBox*>(r_Widget); // Спинбоксы.
+	mpWNameToTabWidgets[strWName] += MakeChildrenListOfType<QTabWidget*>(r_Widget); // Картотеки.
 	// Другие требуемые типы...
 }
 
@@ -164,6 +168,7 @@ void WidgetsSerializer::RegisterChildren(const T& r_Widget, const QVector<QWidge
 		mpWNameToRadioButtons[strWName].remove(static_cast<QRadioButton*>(p_QWidget)); // Переключатели.
 		mpWNameToLineEdits[strWName].remove(static_cast<QLineEdit*>(p_QWidget)); // Строчные редакторы.
 		mpWNameToSpinBoxes[strWName].remove(static_cast<QSpinBox*>(p_QWidget)); // Спинбоксы.
+		mpWNameToTabWidgets[strWName].remove(static_cast<QTabWidget*>(p_QWidget)); // Картотеки.
 		// Другие требуемые типы...
 	}
 }
@@ -194,11 +199,17 @@ void WidgetsSerializer::LoadStates(T& r_Widget, bool bIncludeMainGeometry)
 		oVariant = _r_Settings.value(MkChildName(strWName, p_LineEdit->objectName(), "V"));
 		if(!oVariant.isNull()) p_LineEdit->setText(oVariant.toString());
 	}
-	// Дочерние строчные cпинбоксы.
+	// Дочерние cпинбоксы.
 	for(QSpinBox* p_SpinBox : mpWNameToSpinBoxes[strWName])
 	{
 		oVariant = _r_Settings.value(MkChildName(strWName, p_SpinBox->objectName(), "V"));
 		if(!oVariant.isNull()) p_SpinBox->setValue(oVariant.toInt());
+	}
+	// Дочерние картотеки.
+	for(QTabWidget* p_TabWidget : mpWNameToTabWidgets[strWName])
+	{
+		oVariant = _r_Settings.value(MkChildName(strWName, p_TabWidget->objectName(), "V"));
+		if(!oVariant.isNull()) p_TabWidget->setCurrentIndex(oVariant.toInt());
 	}
 	// Другие требуемые типы...
 }
@@ -230,6 +241,11 @@ void WidgetsSerializer::SaveStates(const T& r_Widget, bool bIncludeMainGeometry)
 	for(QSpinBox* p_SpinBox : mpWNameToSpinBoxes[strWName])
 	{
 		_r_Settings.setValue(MkChildName(strWName, p_SpinBox->objectName(), "V"), p_SpinBox->value());
+	}
+	// Дочерние cпинбоксы.
+	for(QTabWidget* p_TabWidget : mpWNameToTabWidgets[strWName])
+	{
+		_r_Settings.setValue(MkChildName(strWName, p_TabWidget->objectName(), "V"), p_TabWidget->currentIndex());
 	}
 	// Другие требуемые типы...
 }
