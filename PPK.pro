@@ -9,11 +9,16 @@ win32 {
 }
 
 SOURCES += \
+	dialogs/dialog-about.cpp \
+	dialogs/dialog-settings.cpp \
 	logger.cpp \
 	main.cpp \
-	mainwindow.cpp
+	mainwindow.cpp \
+	utilites.cpp
 
 HEADERS += \
+	dialogs/dialog-about.h \
+	dialogs/dialog-settings.h \
 	logger.h \
 	mainwindow.h \
 	pthread/include/_ptw32.h \
@@ -23,9 +28,12 @@ HEADERS += \
 	rapidxml/rapidxml.hpp \
 	rapidxml/rapidxml_print.hpp \
 	rapidxml/rapidxml_utils.hpp \
-	widget-serializer.h
+	utilites.h \
+	widgets-serializer.h
 
 FORMS += \
+	dialogs/dialog-about.ui \
+	dialogs/dialog-settings.ui \
 	mainwindow.ui
 
 DISTFILES += \

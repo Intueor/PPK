@@ -11,7 +11,10 @@
 #include "rapidxml/rapidxml_print.hpp"
 #include "rapidxml/rapidxml_utils.hpp"
 #include "logger.h"
-#include "widget-serializer.h"
+#include "utilites.h"
+#include "widgets-serializer.h"
+#include "dialogs/dialog-about.h"
+#include "dialogs/dialog-settings.h"
 
 //== МАКРОСЫ.
 //! \file mainwindow.h
@@ -33,18 +36,23 @@ private:
 	std::unique_ptr<rapidxml::xml_document<>> up_docDB; ///< Указатель на документ базы данных.
 	std::shared_ptr<QSettings> sp_Settings; ///< Указатель на установки приложения.
 	std::unique_ptr<Logger> up_Logger; ///< Указатель на логгер.
-	std::unique_ptr<WidgetSerializer> up_WidgetSerializer; ///< Указатель на сериализатор виджетов.
+	std::unique_ptr<WidgetsSerializer> up_WidgetsSerializer; ///< Указатель на сериализатор виджетов.
 	QLabel oLabelStatus; ///< Метка статуса.
+	DialogAbout oDialogAbout; ///< Диалог "О программе".
+	DialogSettings oDialogSettings;
 
 public:
 	/// Конструктор.
-	MainWindow(QWidget* p_Parent = nullptr);
-										///< \param[in] p_Parent Указатель на родительский виджет.
+	MainWindow(QWidget* p_WidgetParent = nullptr);
+										///< \param[in] p_WidgetParent Указатель на родительский виджет.
 	/// Деструктор.
 	~MainWindow();
 
 private slots:
 	/// Обработка пункта "О программе".
 	void on_actionAbout_triggered();
+
+	/// Обработка пункта "Настройки".
+	void on_actionSettings_triggered();
 };
 #endif // MAINWINDOW_H

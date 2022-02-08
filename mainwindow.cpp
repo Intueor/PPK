@@ -14,15 +14,17 @@ using namespace std;
 //== ФУНКЦИИ КЛАССОВ.
 //== Класс главного окна.
 // Конструктор.
-MainWindow::MainWindow(QWidget* p_Parent) : QMainWindow(p_Parent), p_UI(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget* p_WidgetParent) : QMainWindow(p_WidgetParent), p_UI(new Ui::MainWindow)
 {
 	p_UI->setupUi(this);
 	up_Logger = make_unique<Logger>("./", "main");
 	ST("Загрузка настроек...");
 	p_UI->statusbar->addPermanentWidget(&oLabelStatus);
 	sp_Settings = make_shared<QSettings>(SETTINGS_NAME, QSettings::IniFormat);
-	up_WidgetSerializer = make_unique<WidgetSerializer>(sp_Settings);
-	up_WidgetSerializer->RegisterChildren(this);
+	up_WidgetsSerializer = make_unique<WidgetsSerializer>(sp_Settings);
+	// Загрузка настроек.
+	up_WidgetsSerializer->RegisterChildren(*this);
+	up_WidgetsSerializer->RegisterChildren(oDialogSettings);
 	if(sp_Settings->allKeys().count() == 0)
 	{
 		Log(up_Logger, LogCat::W, "Файл настроек не обнаружен, загрузка по умолчанию");
@@ -30,9 +32,10 @@ MainWindow::MainWindow(QWidget* p_Parent) : QMainWindow(p_Parent), p_UI(new Ui::
 	}
 	else
 	{
-		up_Logger->ChangeLogLevel(sp_Settings->value("LogLevel").toInt());
+		up_WidgetsSerializer->LoadStates(*this);
+		up_WidgetsSerializer->LoadStates(oDialogSettings, false);
+		up_Logger->ChangeLogLevel(sp_Settings->value("DialogSettings-spinBoxLogLevel-V").toInt());
 		LogS(up_Logger, LogCat::I, "Уровень логирования: " << up_Logger->LogLevel(), 1);
-		up_WidgetSerializer->LoadStates(this);
 		Log(up_Logger, LogCat::I, "Файл настроек загружен и применён.", 2);
 		SM("Настройки загружены.");
 	}
@@ -42,8 +45,8 @@ MainWindow::MainWindow(QWidget* p_Parent) : QMainWindow(p_Parent), p_UI(new Ui::
 // Деструктор.
 MainWindow::~MainWindow()
 {
-	sp_Settings->setValue("LogLevel", up_Logger->LogLevel());
-	up_WidgetSerializer->SaveStates(this);
+	up_WidgetsSerializer->SaveStates(*this);
+	up_WidgetsSerializer->SaveStates(oDialogSettings, false);
 	ST("Сохранение настроек...");
 	sp_Settings->sync();
 	switch(sp_Settings->status())
@@ -65,8 +68,8 @@ MainWindow::~MainWindow()
 }
 
 // Обработка пункта "О программе".
-void MainWindow::on_actionAbout_triggered()
-{
+void MainWindow::on_actionAbout_triggered() { oDialogAbout.exec(); }
 
-}
+// Обработка пункта "Настройки".
+void MainWindow::on_actionSettings_triggered() { CancelableDialogExec(oDialogSettings); }
 
