@@ -2,6 +2,7 @@
 Name=ППК
 Version=0.1.0
 Exec=HOME/.PRJNAME/PRJNAME
+Path=HOME/.PRJNAME
 Comment=
 Icon=HOME/.local/share/icons/hicolor/128x128/apps/PRJNAME.png
 Type=Application
