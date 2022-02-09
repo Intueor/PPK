@@ -1,4 +1,4 @@
-QT += core gui widgets
+QT += core gui widgets sql
 
 CONFIG += c++14
 
@@ -10,6 +10,7 @@ win32 {
 
 SOURCES += \
 	dialogs/dialog-about.cpp \
+	dialogs/dialog-message.cpp \
 	dialogs/dialog-settings.cpp \
 	logger.cpp \
 	main.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
 	dialogs/dialog-about.h \
+	dialogs/dialog-message.h \
 	dialogs/dialog-settings.h \
 	logger.h \
 	mainwindow.h \
@@ -33,6 +35,7 @@ HEADERS += \
 
 FORMS += \
 	dialogs/dialog-about.ui \
+	dialogs/dialog-message.ui \
 	dialogs/dialog-settings.ui \
 	mainwindow.ui
 

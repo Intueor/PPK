@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <QSettings>
 #include <QLabel>
+#include <QSqlDatabase>
 #include <memory>
 
 #include "rapidxml/rapidxml.hpp"
@@ -15,6 +16,7 @@
 #include "widgets-serializer.h"
 #include "dialogs/dialog-about.h"
 #include "dialogs/dialog-settings.h"
+#include "dialogs/dialog-message.h"
 
 //== МАКРОСЫ.
 //! \file mainwindow.h
@@ -39,7 +41,9 @@ private:
 	std::unique_ptr<WidgetsSerializer> up_WidgetsSerializer; ///< Указатель на сериализатор виджетов.
 	QLabel oLabelStatus; ///< Метка статуса.
 	DialogAbout oDialogAbout; ///< Диалог "О программе".
-	DialogSettings oDialogSettings;
+	DialogSettings oDialogSettings; ///< Диалог "Настройки".
+	DialogMessage oDialogMessage; ///< Диалог "Сообщение".
+	QSqlDatabase oDB; ///< Интерфейс базы данных.
 
 public:
 	/// Конструктор.

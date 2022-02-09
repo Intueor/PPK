@@ -58,7 +58,7 @@ private:
 
 	/// Создание сета детей виджета по типу.
 	template <typename T>
-	QSet<T> MakeChildrenListOfType(const QWidget& r_Widget) const
+	QSet<T> MakeChildrenSetOfType(const QWidget& r_Widget) const
 										//! \param[in] r_Widget Ссылка на виджет для работы.
 										//! \return Сет детей по типу.
 	{
@@ -68,7 +68,7 @@ private:
 
 	/// Создание сета детей виджета по типу с исключением листа неприемлемых родителей.
 	template <typename T>
-	QSet<T> MakeChildrenListOfType(const QWidget& r_Widget, const QList<QString>&& r_lTypes)
+	QSet<T> MakeChildrenSetOfType(const QWidget& r_Widget, const QList<QString>&& r_lTypes)
 										//! \param[in] r_Widget Ссылка на виджет для работы.
 										//! \param[in] r_lTypes Ссылка на временный лист с именами типов родителей, детьми которых не могут являться члены итогового списка.
 										//! \return Сет детей по типу с исключением листа неприемлемых родителей.
@@ -147,11 +147,11 @@ void WidgetsSerializer::RegisterChildren(const T& r_Widget)
 {
 	QString strWName = r_Widget.objectName();
 	// Обрабатываемые типы.
-	mpWNameToSplitters[strWName] += MakeChildrenListOfType<QSplitter*>(r_Widget); // Разделители.
-	mpWNameToRadioButtons[strWName] += MakeChildrenListOfType<QRadioButton*>(r_Widget); // Переключатели.
-	mpWNameToLineEdits[strWName] += MakeChildrenListOfType<QLineEdit*>(r_Widget, {"QSpinBox"}); // Строчные редакторы, кроме детей QSpinBox.
-	mpWNameToSpinBoxes[strWName] += MakeChildrenListOfType<QSpinBox*>(r_Widget); // Спинбоксы.
-	mpWNameToTabWidgets[strWName] += MakeChildrenListOfType<QTabWidget*>(r_Widget); // Картотеки.
+	mpWNameToSplitters[strWName] += MakeChildrenSetOfType<QSplitter*>(r_Widget); // Разделители.
+	mpWNameToRadioButtons[strWName] += MakeChildrenSetOfType<QRadioButton*>(r_Widget); // Переключатели.
+	mpWNameToLineEdits[strWName] += MakeChildrenSetOfType<QLineEdit*>(r_Widget, {"QSpinBox"}); // Строчные редакторы, кроме детей QSpinBox.
+	mpWNameToSpinBoxes[strWName] += MakeChildrenSetOfType<QSpinBox*>(r_Widget); // Спинбоксы.
+	mpWNameToTabWidgets[strWName] += MakeChildrenSetOfType<QTabWidget*>(r_Widget); // Картотеки.
 	// Другие требуемые типы...
 }
 

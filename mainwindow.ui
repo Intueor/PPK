@@ -36,14 +36,27 @@
     </property>
     <item>
      <widget class="QTabWidget" name="tabWidgetViews">
-      <widget class="QWidget" name="tab">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tabTimetableP">
        <attribute name="title">
-        <string>Tab 1</string>
+        <string>Расписание преподавателя</string>
        </attribute>
       </widget>
-      <widget class="QWidget" name="tab_2">
+      <widget class="QWidget" name="tabTimetableK">
        <attribute name="title">
-        <string>Tab 2</string>
+        <string>Расписание концертмейстера</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tabJournalP">
+       <attribute name="title">
+        <string>Журнал преподавателя</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tabJournalK">
+       <attribute name="title">
+        <string>Журнал концертмейстера</string>
        </attribute>
       </widget>
      </widget>
