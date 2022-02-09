@@ -12,7 +12,7 @@ namespace Ui { class DialogMessage; }
 enum class MsgCat {I, W, E};
 
 //== КЛАССЫ.
-/// Класс диалога "Настройки".
+/// Класс диалога "Сообщение".
 class DialogMessage : public QDialog
 {
 	Q_OBJECT
