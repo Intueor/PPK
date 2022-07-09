@@ -28,10 +28,10 @@ public:
 	/// Установка или отмена возможности вертикального скроллинга виджета.
 	void SetCanScroll(bool bCan) {bCanScroll = bCan;}
 													///< \param[in] bCan При true - возможен.
-	/// Добавление зависимого вида таблицы.
+	/// Добавление зависимого виджета вида таблицы.
 	void AddRelatedTableView(MTableView* p_MTableView);
 													///< \param[in] p_MTableView Указатель на виджет вида таблицы.
-	/// Удаление зависимого вида таблицы.
+	/// Удаление зависимого виджета вида таблицы.
 	void RemoveRelatedTableView(MTableView* p_MTableView);
 													///< \param[in] p_MTableView Указатель на виджет вида таблицы.
 };

@@ -57,13 +57,13 @@ void MTableView::commitData(QWidget* p_Editor)
 	}
 }
 
-// Добавление зависимого вида таблицы.
+// Добавление зависимого виджета вида таблицы.
 void MTableView::AddRelatedTableView(MTableView* p_MTableView)
 {
 	v_p_MTableViews.push_back(p_MTableView);
 }
 
-// Удаление зависимого вида таблицы.
+// Удаление зависимого виджета вида таблицы.
 void MTableView::RemoveRelatedTableView(MTableView* p_MTableView)
 {
 	v_p_MTableViews.erase(std::find(v_p_MTableViews.begin(), v_p_MTableViews.end(), p_MTableView));
