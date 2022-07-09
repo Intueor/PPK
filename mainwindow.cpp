@@ -16,18 +16,18 @@ using namespace rapidxml;
 //== ФУНКЦИИ КЛАССОВ.
 //== Класс главного окна.
 // Инициализация вида и модели таблицы.
-QSqlRelationalTableModel* MainWindow::InitTable(QObject* p_Parent, const QString& a_strTableName, MTableView* p_MTableView, const QString& a_strFilter, bool bCanScroll,
+QSqlRelationalTableModel* MainWindow::InitTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter, bool bCanScroll,
 												std::vector<MTableView*>* p_v_p_InfluencingTableViews, std::vector<ColumnRelation>* p_vColumnsRelation)
 {
 	QSqlRelationalTableModel* p_QSqlRelationalTableModel = new QSqlRelationalTableModel(p_Parent);
-	p_QSqlRelationalTableModel->setTable(a_strTableName);
+	p_QSqlRelationalTableModel->setTable(r_strTableName);
 	p_QSqlRelationalTableModel->setEditStrategy(QSqlTableModel::OnFieldChange);
-	if(!a_strFilter.isEmpty()) p_QSqlRelationalTableModel->setFilter(a_strFilter);
+	if(!r_strFilter.isEmpty()) p_QSqlRelationalTableModel->setFilter(r_strFilter);
 	p_MTableView->SetCanScroll(bCanScroll);
 	p_MTableView->setModel(p_QSqlRelationalTableModel);
 	p_MTableView->setColumnHidden(0, true);
 	if(p_vColumnsRelation)
-		for(auto oColumnRelation : *p_vColumnsRelation) p_QSqlRelationalTableModel->setRelation(oColumnRelation.iColumn, oColumnRelation.a_QSqlRelation);
+		for(auto oColumnRelation : *p_vColumnsRelation) p_QSqlRelationalTableModel->setRelation(oColumnRelation.iColumn, oColumnRelation.r_QSqlRelation);
 	p_MTableView->setItemDelegate(new QSqlRelationalDelegate(p_QSqlRelationalTableModel));
 	p_QSqlRelationalTableModel->select();
 	if(p_v_p_InfluencingTableViews)

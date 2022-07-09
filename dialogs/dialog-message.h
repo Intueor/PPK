@@ -32,7 +32,6 @@ public Q_SLOTS:
 	void exec(MsgCat eMsgCat, const QString& r_strMsg);
 									///< \param[in] eMsgCat Категория сообщения.
 									///< \param[in] r_strMsg Ссылка на строку сообщения.
-
 	/// Выполнение диалога с категорией и заданным сообщением во временной строке.
 	void exec(MsgCat eMsgCat, const QString&& r_strMsg);
 									///< \param[in] eMsgCat Категория сообщения.

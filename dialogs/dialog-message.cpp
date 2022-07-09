@@ -5,7 +5,7 @@
 //== ФУНКЦИИ КЛАССОВ.
 //== Класс диалога "Сообщение".
 // Конструктор.
-DialogMessage::DialogMessage(QWidget *p_WidgetParent) : QDialog(p_WidgetParent), p_UI(new Ui::DialogMessage) { p_UI->setupUi(this); }
+DialogMessage::DialogMessage(QWidget* p_WidgetParent) : QDialog(p_WidgetParent), p_UI(new Ui::DialogMessage) { p_UI->setupUi(this); }
 
 // Деструктор.
 DialogMessage::~DialogMessage() { delete p_UI; }
