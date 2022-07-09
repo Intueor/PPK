@@ -7,7 +7,8 @@
 //== ФУНКЦИИ.
 /// Исполнение диалога с возможностью отмены результатов.
 //! \file utilites.h
-void CancelableDialogExec(QDialog& r_Dialog);
+bool CancelableDialogExec(QDialog& r_Dialog);
 										///< \param[in,out] r_Dialog Ссылка на диалог для исполнения.
+										///< \return true - при принятии диалога.
 
 #endif // UTILITES_H

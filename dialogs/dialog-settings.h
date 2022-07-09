@@ -13,8 +13,8 @@ class DialogSettings : public QDialog
 {
 	Q_OBJECT
 
-private:
-	Ui::DialogSettings* p_UI; ///< Указатель на объект пользовательского интерфейса.
+public:
+	Ui::DialogSettings* p_UI; ///< Указатель на объект пользовательского интерфейса, открыт для внешнего доступа.
 
 public:
 	/// Конструктор.

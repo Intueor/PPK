@@ -15,6 +15,7 @@ SOURCES += \
 	logger.cpp \
 	main.cpp \
 	mainwindow.cpp \
+	mtableview.cpp \
 	utilites.cpp
 
 HEADERS += \
@@ -23,6 +24,7 @@ HEADERS += \
 	dialogs/dialog-settings.h \
 	logger.h \
 	mainwindow.h \
+	mtableview.h \
 	pthread/include/_ptw32.h \
 	pthread/include/pthread.h \
 	pthread/include/sched.h \
@@ -46,6 +48,7 @@ DISTFILES += \
 	PPK.png \
 	README.md \
 	cleanup \
+	default.db \
 	deployment \
 	linux_project_settings.txt \
 	pthread/lib/pthread_static_lib.lib
