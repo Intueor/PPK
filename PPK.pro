@@ -5,7 +5,8 @@ CONFIG += c++14
 win32 {
 	LIBS += ..\\PPK\\pthread\\lib\\pthread_static_lib.lib
 	CONFIG += console
-	QMAKE_LFLAGS_DEBUG += /NODEFAULTLIB:MSVCRT
+	QMAKE_LFLAGS_DEBUG += /NODEFAULTLIB:MSVCRT /LTCG
+	QMAKE_LFLAGS_RELEASE += /LTCG
 }
 
 SOURCES += \
