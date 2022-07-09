@@ -16,6 +16,7 @@ enum class MsgCat {I, W, E};
 class DialogMessage : public QDialog
 {
 	Q_OBJECT
+	using QDialog::exec; ///< Правка для совместимости с Clang.
 
 private:
 	Ui::DialogMessage* p_UI; ///< Указатель на объект пользовательского интерфейса.
