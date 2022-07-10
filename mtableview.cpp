@@ -8,7 +8,7 @@
 // Переопределение обновления геометрии для авторасширения без вертикального скроллинга.
 void MTableView::updateGeometries()
 {
-	if(!bCanScroll)
+	if(!_bCanScroll)
 	{
 		int iRQ = 0;
 		int iAllRowsHeight = 0;
@@ -55,6 +55,14 @@ void MTableView::commitData(QWidget* p_Editor)
 		p_MTableView->setItemDelegate(new QSqlRelationalDelegate(p_QSqlRelationalTableModel));
 		p_QSqlRelationalTableModel->select();
 	}
+	if(_iColumnForSort) this->sortByColumn(_iColumnForSort, Qt::SortOrder::AscendingOrder);
+}
+
+// Установка колонки для автосортировки или 0.
+void MTableView::SetColumnForSort(int iColumnForSort)
+{
+	_iColumnForSort = iColumnForSort;
+	if(_iColumnForSort) this->sortByColumn(_iColumnForSort, Qt::SortOrder::AscendingOrder);
 }
 
 // Добавление зависимого виджета вида таблицы.

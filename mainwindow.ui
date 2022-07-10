@@ -70,7 +70,7 @@
              <x>0</x>
              <y>0</y>
              <width>707</width>
-             <height>525</height>
+             <height>537</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -142,6 +142,9 @@
                  <property name="horizontalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
                  </property>
+                 <property name="cornerButtonEnabled">
+                  <bool>false</bool>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -199,6 +202,9 @@
                  </property>
                  <property name="horizontalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="cornerButtonEnabled">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -258,6 +264,9 @@
                  <property name="horizontalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
                  </property>
+                 <property name="cornerButtonEnabled">
+                  <bool>false</bool>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -315,6 +324,9 @@
                  </property>
                  <property name="horizontalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="cornerButtonEnabled">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -374,6 +386,9 @@
                  <property name="horizontalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
                  </property>
+                 <property name="cornerButtonEnabled">
+                  <bool>false</bool>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -431,6 +446,9 @@
                  </property>
                  <property name="horizontalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="cornerButtonEnabled">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -491,7 +509,14 @@
             <number>1</number>
            </property>
            <item>
-            <widget class="MTableView" name="tableViewLengths"/>
+            <widget class="MTableView" name="tableViewLengths">
+             <property name="cornerButtonEnabled">
+              <bool>false</bool>
+             </property>
+             <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+              <bool>false</bool>
+             </attribute>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -519,7 +544,11 @@
          <number>1</number>
         </property>
         <item>
-         <widget class="MTableView" name="tableViewDisciplines"/>
+         <widget class="MTableView" name="tableViewDisciplines">
+          <property name="cornerButtonEnabled">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -544,7 +573,11 @@
          <number>1</number>
         </property>
         <item>
-         <widget class="MTableView" name="tableViewContSpec"/>
+         <widget class="MTableView" name="tableViewContSpec">
+          <property name="cornerButtonEnabled">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -569,7 +602,11 @@
          <number>1</number>
         </property>
         <item>
-         <widget class="MTableView" name="tableViewContConc"/>
+         <widget class="MTableView" name="tableViewContConc">
+          <property name="cornerButtonEnabled">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -594,7 +631,11 @@
          <number>1</number>
         </property>
         <item>
-         <widget class="MTableView" name="tableViewSchedule"/>
+         <widget class="MTableView" name="tableViewSchedule">
+          <property name="cornerButtonEnabled">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -608,7 +649,7 @@
      <x>0</x>
      <y>0</y>
      <width>768</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">

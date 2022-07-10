@@ -114,6 +114,8 @@ gFE:		Log(up_Logger, LogCat::E, "Невозможно создать файл б
 	InitTable(this, "ДлиныЗанятий", p_UI->tableViewLengths);
 	p_UI->tableViewLengths->horizontalHeader()->hide();
 	p_UI->tableViewLengths->verticalHeader()->hide();
+	p_UI->tableViewLengths->SetColumnForSort(1);
+	p_UI->tableViewLengths->sortByColumn(1, Qt::SortOrder::AscendingOrder);
 	// Инициализация вида и модели предметов.
 	InitTable(this, "Предметы", p_UI->tableViewDisciplines);
 	// Инициализация вида и модели контингента спец.
