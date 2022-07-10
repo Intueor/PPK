@@ -24,11 +24,13 @@ private:
 													///< \param[in] p_Editor Указатель на виджет редактора.
 public:
 	/// Конструктор.
-	explicit MTableView(QWidget* p_Parent = nullptr) : QTableView(p_Parent) {}
+	explicit MTableView(QWidget* p_Parent = nullptr) : QTableView(p_Parent)
 													///< \param[in] p_Parent Указатель на родительский виджет.
+	{}
 	/// Установка или отмена возможности вертикального скроллинга виджета.
-	void SetCanScroll(bool bCanScroll) {_bCanScroll = bCanScroll;}
+	void SetCanScroll(bool bCanScroll)
 													///< \param[in] bCan При true - возможен.
+	{_bCanScroll = bCanScroll;}
 	/// Установка колонки для автосортировки или 0.
 	void SetColumnForSort(int iColumnForSort);
 													///< \param[in] bCan Колонка для автосортировки или 0.
