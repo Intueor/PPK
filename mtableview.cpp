@@ -23,7 +23,7 @@ void MTableView::updateGeometries()
 					iAllRowsHeight += rowHeight(iCurRow);
 				}
 				iLastRQ = iRQ;
-				setFixedHeight(iAllRowsHeight + horizontalHeader()->height() + 2);
+				setFixedHeight(iAllRowsHeight + horizontalHeader()->height() + this->verticalHeader()->height());
 			}
 		}
 	}
