@@ -34,7 +34,18 @@ void MTableView::updateGeometries()
 void MTableView::commitData(QWidget* p_Editor)
 {
 	QTableView::commitData(p_Editor);
-	for(auto p_MTableView : v_p_MTableViews)
+	UpdateRelatedTableViews();
+}
+
+// Перезагрузка зависимых видов таблиц.
+void MTableView::UpdateRelatedTableViews()
+{
+	if(_iColumnForSort)
+	{
+		// Тут должна быть сортировка таблицы.
+		this->model()->sort(_iColumnForSort);
+	}
+	for(auto p_MTableView : v_p_MTableViewsRelated)
 	{
 		QSqlRelationalTableModel* p_QSqlRelationalTableModel = static_cast<QSqlRelationalTableModel*>(p_MTableView->model());
 		QString strTableName = p_QSqlRelationalTableModel->tableName();
@@ -52,27 +63,26 @@ void MTableView::commitData(QWidget* p_Editor)
 			if(vRelations.begin()->isValid()) p_QSqlRelationalTableModel->setRelation(iC, *vRelations.begin());
 			vRelations.erase(vRelations.begin());
 		}
-		p_MTableView->setItemDelegate(new QSqlRelationalDelegate(p_QSqlRelationalTableModel));
+		p_MTableView->setItemDelegate(new MSqlRelationalDelegate(p_QSqlRelationalTableModel));
 		p_QSqlRelationalTableModel->select();
 	}
-	if(_iColumnForSort) this->sortByColumn(_iColumnForSort, Qt::SortOrder::AscendingOrder);
 }
 
 // Установка колонки для автосортировки или 0.
 void MTableView::SetColumnForSort(int iColumnForSort)
 {
 	_iColumnForSort = iColumnForSort;
-	if(_iColumnForSort) this->sortByColumn(_iColumnForSort, Qt::SortOrder::AscendingOrder);
+	if(_iColumnForSort) this->model()->sort(_iColumnForSort);
 }
 
 // Добавление зависимого виджета вида таблицы.
-void MTableView::AddRelatedTableView(MTableView* p_MTableView)
+void MTableView::AddRelatedTableView(MTableView* p_MTableViewRelated)
 {
-	v_p_MTableViews.push_back(p_MTableView);
+	v_p_MTableViewsRelated.push_back(p_MTableViewRelated);
 }
 
 // Удаление зависимого виджета вида таблицы.
-void MTableView::RemoveRelatedTableView(MTableView* p_MTableView)
+void MTableView::RemoveRelatedTableView(MTableView* p_MTableViewRelated)
 {
-	v_p_MTableViews.erase(std::find(v_p_MTableViews.begin(), v_p_MTableViews.end(), p_MTableView));
+	v_p_MTableViewsRelated.erase(std::find(v_p_MTableViewsRelated.begin(), v_p_MTableViewsRelated.end(), p_MTableViewRelated));
 }

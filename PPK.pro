@@ -16,6 +16,7 @@ SOURCES += \
 	logger.cpp \
 	main.cpp \
 	mainwindow.cpp \
+	msqlrelationaldelegate.cpp \
 	mtableview.cpp \
 	utilites.cpp
 
@@ -25,6 +26,7 @@ HEADERS += \
 	dialogs/dialog-settings.h \
 	logger.h \
 	mainwindow.h \
+	msqlrelationaldelegate.h \
 	mtableview.h \
 	pthread/include/_ptw32.h \
 	pthread/include/pthread.h \
