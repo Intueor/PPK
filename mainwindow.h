@@ -64,7 +64,7 @@ private:
 	void ApplySettingsDialogValues();
 	/// Инициализация вида и модели таблицы.
 	QSqlRelationalTableModel* InitTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter = "", bool bSortEnabled = false, int iColumnForSort = 0,
-										std::vector<MTableView*>* p_v_p_InfluencingTableViews = nullptr, std::vector<ColumnRelation>* p_vColumnsRelation = nullptr);
+										std::vector<MTableView*>* p_v_p_InfluencingTableViews = nullptr, std::vector<ColumnRelation>* p_vColumnsRelations = nullptr);
 													///< \param[in] p_Parent Указатель на родительский объект.
 													///< \param[in] r_strTableName Ссылка на конст. строку с именем таблицы.
 													///< \param[in] p_MTableView Указатель на виджет вида таблицы.
@@ -72,7 +72,7 @@ private:
 													///< \param[in] bCanScroll При false - расширение вертикального разм. таблицы под контент.
 													///< \param[in] iColumnForSort 0 - для отсутствия сортировки или номер колонки.
 													///< \param[in] p_v_p_InfluencingTableViews Указатель на вектор указателей на виджеты вида таблиц, которые могут менять контент текущего виджета вида.
-													///< \param[in] p_vColumnsRelation Указатель на вектор стрктур, описывающих отношение столбцов таблицы к столбцам других.
+													///< \param[in] p_vColumnsRelations Указатель на вектор стрктур, описывающих отношение столбцов таблицы к столбцам других.
 public:
 	/// Конструктор.
 	MainWindow(QWidget* p_WidgetParent = nullptr);

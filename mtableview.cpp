@@ -40,11 +40,6 @@ void MTableView::commitData(QWidget* p_Editor)
 // Перезагрузка зависимых видов таблиц.
 void MTableView::UpdateRelatedTableViews()
 {
-	if(_iColumnForSort)
-	{
-		// Тут должна быть сортировка таблицы.
-		this->model()->sort(_iColumnForSort);
-	}
 	for(auto p_MTableView : v_p_MTableViewsRelated)
 	{
 		QSqlRelationalTableModel* p_QSqlRelationalTableModel = static_cast<QSqlRelationalTableModel*>(p_MTableView->model());
@@ -64,7 +59,15 @@ void MTableView::UpdateRelatedTableViews()
 			vRelations.erase(vRelations.begin());
 		}
 		p_MTableView->setItemDelegate(new MSqlRelationalDelegate(p_QSqlRelationalTableModel));
+		if(p_MTableView->_iColumnForSort)
+		{
+			p_MTableView->sortByColumn(p_MTableView->_iColumnForSort, Qt::AscendingOrder);
+		}
 		p_QSqlRelationalTableModel->select();
+	}
+	if(_iColumnForSort)
+	{
+		this->model()->sort(_iColumnForSort);
 	}
 }
 
