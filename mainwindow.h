@@ -43,9 +43,9 @@ private:
 	};
 
 private:
-	Ui::MainWindow* p_UI; ///< Указатель на объект пользовательского интерфейса.
+	Ui::MainWindow* p_UI = nullptr; ///< Указатель на объект пользовательского интерфейса.
 	std::unique_ptr<rapidxml::xml_document<>> up_docDB; ///< Указатель на документ базы данных.
-	QSettings* p_Settings; ///< Указатель на установки приложения.
+	QSettings* p_Settings = nullptr; ///< Указатель на установки приложения.
 	std::unique_ptr<Logger> up_Logger; ///< Указатель на логгер.
 	std::unique_ptr<WidgetsSerializer> up_WidgetsSerializer; ///< Указатель на сериализатор виджетов.
 	QLabel oLabelStatus; ///< Метка статуса.
@@ -58,21 +58,25 @@ private:
 	QString strDBTempPath; ///< Путь к временному файлу базы данных.
 	QFile oDbFile; ///< Интерфейс для работы с файлом базы данных.
 	QSqlDatabase oDB; ///< Интерфейс базы данных.
+	const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType> mpSchedColsDataTypes = {{1, MSqlRelationalDelegate::CustomDelegateType::FormattedTime}}; ///< Типы данных делегата сетки занятий.
+	const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType> mpLenColsDataTypes = {{1, MSqlRelationalDelegate::CustomDelegateType::Positive}}; ///< Типы данных делегата длин занятий.
 
 private:
 	/// Приминение значений из диалога настроек.
 	void ApplySettingsDialogValues();
 	/// Инициализация вида и модели таблицы.
 	QSqlRelationalTableModel* InitTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter = "", bool bSortEnabled = false, int iColumnForSort = 0,
-										std::vector<MTableView*>* p_v_p_InfluencingTableViews = nullptr, std::vector<ColumnRelation>* p_vColumnsRelations = nullptr);
+										const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType>* const p_mpColumnsDataTypes = nullptr,
+										std::vector<MTableView*>* const p_v_p_InfluencingTableViews = nullptr, std::vector<ColumnRelation>* const p_vColumnsRelations = nullptr);
 													///< \param[in] p_Parent Указатель на родительский объект.
 													///< \param[in] r_strTableName Ссылка на конст. строку с именем таблицы.
 													///< \param[in] p_MTableView Указатель на виджет вида таблицы.
 													///< \param[in] r_strFilter Ссылка на конст. строку с фильтром.
 													///< \param[in] bCanScroll При false - расширение вертикального разм. таблицы под контент.
 													///< \param[in] iColumnForSort 0 - для отсутствия сортировки или номер колонки.
-													///< \param[in] p_v_p_InfluencingTableViews Указатель на вектор указателей на виджеты вида таблиц, которые могут менять контент текущего виджета вида.
-													///< \param[in] p_vColumnsRelations Указатель на вектор стрктур, описывающих отношение столбцов таблицы к столбцам других.
+													///< \param[in] p_mpColumnsDataTypes Константный указатель на константную карту 'колонка в тип данных' или nullptr.
+													///< \param[in] p_v_p_InfluencingTableViews Константный ук. на вектор указателей на виджеты вида таблиц, которые могут менять контент текущего виджета вида.
+													///< \param[in] p_vColumnsRelations Константный указатель на вектор стрктур, описывающих отношение столбцов таблицы к столбцам других.
 public:
 	/// Конструктор.
 	MainWindow(QWidget* p_WidgetParent = nullptr);

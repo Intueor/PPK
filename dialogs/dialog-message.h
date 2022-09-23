@@ -19,7 +19,7 @@ class DialogMessage : public QDialog
 	using QDialog::exec; ///< Правка для совместимости с Clang.
 
 private:
-	Ui::DialogMessage* p_UI; ///< Указатель на объект пользовательского интерфейса.
+	Ui::DialogMessage* p_UI = nullptr; ///< Указатель на объект пользовательского интерфейса.
 
 public:
 	/// Конструктор.

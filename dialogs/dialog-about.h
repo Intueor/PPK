@@ -14,7 +14,7 @@ class DialogAbout : public QDialog
 	Q_OBJECT
 
 private:
-	Ui::DialogAbout* p_UI; ///< Указатель на объект пользовательского интерфейса.
+	Ui::DialogAbout* p_UI = nullptr; ///< Указатель на объект пользовательского интерфейса.
 
 public:
 	/// Конструктор.

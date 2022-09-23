@@ -1,5 +1,6 @@
 //== ВКЛЮЧЕНИЯ.
 #include "msqlrelationaldelegate.h"
+#include <QLineEdit>
 
 //== ФУНКЦИИ КЛАССОВ.
 //== Класс модифицированного для сортировки sql-соотносимого делегата виджета вида таблицы.
@@ -25,4 +26,48 @@ QWidget* MSqlRelationalDelegate::createEditor(QWidget* p_Parent, const QStyleOpt
 	p_Combo->setModelColumn(fieldIndex(p_ChildModel, p_Driver, p_SqlModel->relation(r_Index.column()).displayColumn()));
 	p_Combo->installEventFilter(const_cast<MSqlRelationalDelegate *>(this));
 	return p_Combo;
+}
+
+// Переопределённая функция установки данных модели для проверки и отсечения некорректных данных по колонке и типу из карты.
+void MSqlRelationalDelegate::setModelData(QWidget* p_Editor, QAbstractItemModel* p_Model, const QModelIndex& r_Index) const
+{
+	QLineEdit* p_LineEdit = qobject_cast<QLineEdit*>(p_Editor);
+	if(p_LineEdit &&  _p_mpColumnsDataTypes)
+	{
+		QString strText = p_LineEdit->text();
+		for(const auto& r_prType : *_p_mpColumnsDataTypes)
+		{
+			if(r_prType.first == r_Index.column())
+			{
+				switch(r_prType.second)
+				{
+					case CustomDelegateType::FormattedTime:
+					{
+						int iLength = strText.length();
+						if(iLength > 5 || iLength < 3 || !strText.contains(':')) return;
+						QStringList strlHM = strText.split(':', Qt::SkipEmptyParts);
+						if(strlHM.length() != 2) return;
+						int iH = strlHM.at(0).toInt();
+						if((iH < 0) || (iH > 23)) return;
+						int iM = strlHM.at(1).toInt();
+						if((iM < 0) || (iM > 59)) return;
+						QString strH = QString::number(iH);
+						QString strM = QString::number(iM);
+						if(strH.length() < 2) strH.prepend('0');
+						if(strM.length() < 2) strM.prepend('0');
+						p_LineEdit->setText(strH + ':' + strM);
+						break;
+					}
+					case CustomDelegateType::Positive:
+					{
+						if(strText.toInt() < 0) return;
+						break;
+					}
+				}
+			}
+		}
+
+	}
+
+	QSqlRelationalDelegate::setModelData(p_Editor, p_Model, r_Index);
 }

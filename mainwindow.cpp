@@ -16,7 +16,8 @@ using namespace rapidxml;
 //== Класс главного окна.
 // Инициализация вида и модели таблицы.
 QSqlRelationalTableModel* MainWindow::InitTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter, bool bCanScroll, int iColumnForSort,
-												std::vector<MTableView*>* p_v_p_InfluencingTableViews, std::vector<ColumnRelation>* p_vColumnsRelations)
+												const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType>* const p_mpColumnsDataTypes,
+												std::vector<MTableView*>* const p_v_p_InfluencingTableViews, std::vector<ColumnRelation>* const p_vColumnsRelations)
 {
 	QSqlRelationalTableModel* p_QSqlRelationalTableModel = new QSqlRelationalTableModel(p_Parent);
 	p_QSqlRelationalTableModel->setTable(r_strTableName);
@@ -27,7 +28,7 @@ QSqlRelationalTableModel* MainWindow::InitTable(QObject* p_Parent, const QString
 	p_MTableView->setColumnHidden(0, true);
 	if(p_vColumnsRelations)
 		for(auto oColumnRelation : *p_vColumnsRelations) p_QSqlRelationalTableModel->setRelation(oColumnRelation.iColumn, oColumnRelation.r_QSqlRelation);
-	p_MTableView->setItemDelegate(new MSqlRelationalDelegate(p_QSqlRelationalTableModel));
+	p_MTableView->setItemDelegate(new MSqlRelationalDelegate(p_QSqlRelationalTableModel, p_mpColumnsDataTypes));
 	p_QSqlRelationalTableModel->select();
 	if(p_v_p_InfluencingTableViews)
 		for(auto p_MTableViewTarget : *p_v_p_InfluencingTableViews) p_MTableViewTarget->AddRelatedTableView(p_MTableView);
@@ -108,13 +109,13 @@ gFE:		Log(up_Logger, LogCat::E, "Невозможно создать файл б
 		itDayNames++;
 		std::vector<ColumnRelation> vColumnsRelations = {{2, oDayTablesRelation2}, {3, oDayTablesRelation3}, {4, oDayTablesRelation4}, {6, oDayTablesRelation6}};
 		std::vector<MTableView*> v_p_InfluencingTableViews = {p_UI->tableViewSchedule, p_UI->tableViewContConc, p_UI->tableViewContSpec, p_UI->tableViewDisciplines, p_UI->tableViewLengths};
-		InitTable(this, "Расписание", p_DayTable, strFilter, false, 2, &v_p_InfluencingTableViews, &vColumnsRelations);
+		InitTable(this, "Расписание", p_DayTable, strFilter, false, 2, nullptr, &v_p_InfluencingTableViews, &vColumnsRelations);
 		p_DayTable->setColumnHidden(1, true);
 	}
 	// Инициализация вида и модели сетки занятий.
-	InitTable(this, "СеткаЗанятий", p_UI->tableViewSchedule, "", false, 1);
+	InitTable(this, "СеткаЗанятий", p_UI->tableViewSchedule, "", false, 1, &mpSchedColsDataTypes);
 	// Инициализация вида и модели прод. занятий.
-	InitTable(this, "ДлиныЗанятий", p_UI->tableViewLengths, "", false, 1);
+	InitTable(this, "ДлиныЗанятий", p_UI->tableViewLengths, "", false, 1, &mpLenColsDataTypes);
 	// Инициализация вида и модели предметов.
 	InitTable(this, "Предметы", p_UI->tableViewDisciplines);
 	// Инициализация вида и модели контингента спец.
