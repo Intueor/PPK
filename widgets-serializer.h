@@ -2,6 +2,7 @@
 #define WIDGETSERIALIZER_H
 
 //== ВКЛЮЧЕНИЯ.
+#include "mtableview.h"
 #include <QSettings>
 #include <QList>
 #include <QSplitter>
@@ -12,8 +13,10 @@
 #include <QMap>
 #include <QSet>
 #include <QTabWidget>
+#include <QHeaderView>
 
 //== МАКРОСЫ.
+#define MIN_AUTO_SIZE_OF_TABLE_H_LAST_SECTION	5
 #define MkWidgetName(widget,suffix)				widget+"-"+suffix
 #define MkChildName(parent,widget,suffix)		parent+"-"+MkWidgetName(widget,suffix)
 
@@ -30,6 +33,7 @@ private:
 	QMap<QString, QSet<QLineEdit*>> mpWNameToLineEdits; ///< Мап имён виджетов к сету указателей на редактируемые строки.
 	QMap<QString, QSet<QSpinBox*>> mpWNameToSpinBoxes; ///< Мап имён виджетов к сету указателей на спинбоксы.
 	QMap<QString, QSet<QTabWidget*>> mpWNameToTabWidgets; ///< Мап имён виджетов к сету указателей на картотеки.
+	QMap<QString, QSet<MTableView*>> mpWNameToMTableViews; ///< Мап имён виджетов к сету указателей на модифицированные таблицы.
 	// Другие требуемые типы...
 
 private:
@@ -116,6 +120,7 @@ public:
 			else if(strType == "QLineEdit") mpWNameToLineEdits[strWName].insert(static_cast<QLineEdit*>(r_Widget)); // Строчные редакторы.
 			else if(strType == "QSpinBox") mpWNameToSpinBoxes[strWName].insert(static_cast<QSpinBox*>(r_Widget)); // Спинбоксы.
 			else if(strType == "QTabWidget") mpWNameToTabWidgets[strWName].insert(static_cast<QTabWidget*>(r_Widget)); // Картотеки.
+			else if(strType == "MTableView") mpWNameToMTableViews[strWName].insert(static_cast<MTableView*>(r_Widget)); // Таблицы.
 			// Другие требуемые типы...
 		}
 	}
@@ -152,6 +157,7 @@ void WidgetsSerializer::RegisterChildren(const T& r_Widget)
 	mpWNameToLineEdits[strWName] += MakeChildrenSetOfType<QLineEdit*>(r_Widget, {"QSpinBox"}); // Строчные редакторы, кроме детей QSpinBox.
 	mpWNameToSpinBoxes[strWName] += MakeChildrenSetOfType<QSpinBox*>(r_Widget); // Спинбоксы.
 	mpWNameToTabWidgets[strWName] += MakeChildrenSetOfType<QTabWidget*>(r_Widget); // Картотеки.
+	mpWNameToMTableViews[strWName] += MakeChildrenSetOfType<MTableView*>(r_Widget); // Таблицы.
 	// Другие требуемые типы...
 }
 
@@ -169,6 +175,7 @@ void WidgetsSerializer::RegisterChildren(const T& r_Widget, const QVector<QWidge
 		mpWNameToLineEdits[strWName].remove(static_cast<QLineEdit*>(p_QWidget)); // Строчные редакторы.
 		mpWNameToSpinBoxes[strWName].remove(static_cast<QSpinBox*>(p_QWidget)); // Спинбоксы.
 		mpWNameToTabWidgets[strWName].remove(static_cast<QTabWidget*>(p_QWidget)); // Картотеки.
+		mpWNameToMTableViews[strWName].remove(static_cast<MTableView*>(p_QWidget)); // Таблицы.
 		// Другие требуемые типы...
 	}
 }
@@ -211,6 +218,22 @@ void WidgetsSerializer::LoadStates(T& r_Widget, bool bIncludeMainGeometry)
 		oVariant = _r_Settings.value(MkChildName(strWName, p_TabWidget->objectName(), "V"));
 		if(!oVariant.isNull()) p_TabWidget->setCurrentIndex(oVariant.toInt());
 	}
+	// Дочерние таблицы.
+	for(MTableView* p_MTableView : mpWNameToMTableViews[strWName])
+	{
+		oVariant = _r_Settings.value(MkChildName(strWName, p_MTableView->objectName(), "C"));
+		if(!oVariant.isNull())
+		{
+			QString strColls = oVariant.toString();
+			QStringList strlColls = strColls.split(',', Qt::SkipEmptyParts);
+			int iC = 0;
+			for(const auto& r_Coll : strlColls)
+			{
+				p_MTableView->setColumnWidth(iC, r_Coll.toInt());
+				iC++;
+			}
+		}
+	}
 	// Другие требуемые типы...
 }
 
@@ -246,6 +269,21 @@ void WidgetsSerializer::SaveStates(const T& r_Widget, bool bIncludeMainGeometry)
 	for(QTabWidget* p_TabWidget : mpWNameToTabWidgets[strWName])
 	{
 		_r_Settings.setValue(MkChildName(strWName, p_TabWidget->objectName(), "V"), p_TabWidget->currentIndex());
+	}
+	// Дочерние таблицы.
+	for(MTableView* p_MTableView : mpWNameToMTableViews[strWName])
+	{
+		int iColls = p_MTableView->model()->columnCount();
+		QString strColls;
+		for(int iC = 0; iC < iColls; iC++)
+		{
+			int iColWidth = p_MTableView->columnWidth(iC);
+			if((iC == iColls - 1) && p_MTableView->horizontalHeader()->stretchLastSection()) iColWidth = MIN_AUTO_SIZE_OF_TABLE_H_LAST_SECTION;
+			strColls += QString::number(iColWidth);
+			strColls += ",";
+		}
+		if(!strColls.isEmpty()) strColls.erase(strColls.end() - 1, strColls.end());
+		_r_Settings.setValue(MkChildName(strWName, p_MTableView->objectName(), "C"), strColls);
 	}
 	// Другие требуемые типы...
 }

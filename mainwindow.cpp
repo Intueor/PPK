@@ -33,6 +33,7 @@ QSqlRelationalTableModel* MainWindow::InitTable(QObject* p_Parent, const QString
 	if(p_v_p_InfluencingTableViews)
 		for(auto p_MTableViewTarget : *p_v_p_InfluencingTableViews) p_MTableViewTarget->AddRelatedTableView(p_MTableView);
 	p_MTableView->SetColumnForSort(iColumnForSort);
+	p_MTableView->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
 	return p_QSqlRelationalTableModel;
 }
 
@@ -43,22 +44,6 @@ MainWindow::MainWindow(QWidget* p_WidgetParent) : QMainWindow(p_WidgetParent), p
 	p_Settings = new QSettings(SETTINGS_NAME, QSettings::IniFormat);
 	up_Logger = std::make_unique<Logger>("./", "main");
 	p_UI->statusbar->addPermanentWidget(&oLabelStatus);
-	up_WidgetsSerializer = std::make_unique<WidgetsSerializer>(*p_Settings);
-	// Загрузка настроек.
-	up_WidgetsSerializer->RegisterChildren(*this);
-	up_WidgetsSerializer->RegisterChildren(oDialogSettings);
-	if(p_Settings->allKeys().count() == 0)
-	{
-		Log(up_Logger, LogCat::W, "Файл настроек не обнаружен, загрузка значений по умолчанию");
-		SM("Настройки не загружены, будут созданы новые.");
-	}
-	else
-	{
-		up_WidgetsSerializer->LoadStates(*this);
-		up_WidgetsSerializer->LoadStates(oDialogSettings, false);
-		ApplySettingsDialogValues();
-		Log(up_Logger, LogCat::I, "Файл настроек применён.", 2);
-	}
 	// Подключение к базе данных.
 	strDBName = p_Settings->value("DBName").toString();
 	if(strDBName.isEmpty()) strDBName = "default.db";
@@ -68,7 +53,7 @@ MainWindow::MainWindow(QWidget* p_WidgetParent) : QMainWindow(p_WidgetParent), p
 	const QString strMsg = "Файл базы данных не обнаружен, создание нового.";
 	if(!oDbFile.exists())
 	{
-		Log(up_Logger, LogCat::I, strMsg.toStdString(), 1);
+		Log(up_Logger, LogCat::I, strMsg.toStdString());
 		SM(strMsg);
 		if(oDbFile.open(QIODevice::WriteOnly | QIODevice::Text)) oDbFile.close();
 		else
@@ -124,8 +109,24 @@ gFE:		Log(up_Logger, LogCat::E, "Невозможно создать файл б
 	// Инициализация вида и модели контингента конц.
 	InitTable(this, "Контингент", p_UI->tableViewPConc, strTypePref + "1", false);
 	p_UI->tableViewPConc->setColumnHidden(4, true);
-	// Завершение.
+	// Загрузка настроек.
+	up_WidgetsSerializer = std::make_unique<WidgetsSerializer>(*p_Settings);
+	up_WidgetsSerializer->RegisterChildren(*this);
+	up_WidgetsSerializer->RegisterChildren(oDialogSettings);
+	if(p_Settings->allKeys().count() == 0)
+	{
+		Log(up_Logger, LogCat::W, "Файл настроек не обнаружен, загрузка значений по умолчанию");
+		SM("Настройки не загружены, будут созданы новые.");
+	}
+	else
+	{
+		up_WidgetsSerializer->LoadStates(*this);
+		up_WidgetsSerializer->LoadStates(oDialogSettings, false);
+		ApplySettingsDialogValues();
+		Log(up_Logger, LogCat::I, "Файл настроек применён.", 2);
+	}
 	LogS(up_Logger, LogCat::I, "База данных [" << strDBName.toStdString() << "] подключена.", 2);
+	// Завершение.
 	ST("Готов.");
 }
 
@@ -143,7 +144,7 @@ MainWindow::~MainWindow()
 		Log(up_Logger, LogCat::E, strMsg.toStdString());
 		oDialogMessage.exec(MsgCat::E, strMsg);
 	}
-	else LogS(up_Logger, LogCat::I, "База данных[" << strDBName.toStdString() << "] сохранена.", 2);
+	else LogS(up_Logger, LogCat::I, "База данных [" << strDBName.toStdString() << "] сохранена.", 2);
 	oDbFile.setFileName(strDBTempPath);
 	oDbFile.remove();
 	p_Settings->setValue("DBName", strDBName);

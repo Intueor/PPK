@@ -142,6 +142,15 @@
                  <property name="cornerButtonEnabled">
                   <bool>false</bool>
                  </property>
+                 <attribute name="horizontalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>5</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                 </widget>
                </item>
               </layout>
@@ -200,6 +209,15 @@
                  <property name="cornerButtonEnabled">
                   <bool>false</bool>
                  </property>
+                 <attribute name="horizontalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>5</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                 </widget>
                </item>
               </layout>
@@ -258,6 +276,15 @@
                  <property name="cornerButtonEnabled">
                   <bool>false</bool>
                  </property>
+                 <attribute name="horizontalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>5</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                 </widget>
                </item>
               </layout>
@@ -316,6 +343,15 @@
                  <property name="cornerButtonEnabled">
                   <bool>false</bool>
                  </property>
+                 <attribute name="horizontalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>5</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                 </widget>
                </item>
               </layout>
@@ -374,6 +410,15 @@
                  <property name="cornerButtonEnabled">
                   <bool>false</bool>
                  </property>
+                 <attribute name="horizontalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>5</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                 </widget>
                </item>
               </layout>
@@ -432,6 +477,15 @@
                  <property name="cornerButtonEnabled">
                   <bool>false</bool>
                  </property>
+                 <attribute name="horizontalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>5</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                 </widget>
                </item>
               </layout>
@@ -517,10 +571,10 @@
                </size>
               </property>
               <property name="title">
-               <string>Сетка</string>
+               <string> Сетка</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_10">
                <property name="spacing">
@@ -543,11 +597,23 @@
                  <property name="horizontalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
                  </property>
+                 <property name="horizontalScrollMode">
+                  <enum>QAbstractItemView::ScrollPerPixel</enum>
+                 </property>
                  <property name="cornerButtonEnabled">
                   <bool>false</bool>
                  </property>
                  <attribute name="horizontalHeaderVisible">
                   <bool>false</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>5</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
                  </attribute>
                  <attribute name="verticalHeaderVisible">
                   <bool>false</bool>
@@ -591,10 +657,10 @@
                </size>
               </property>
               <property name="title">
-               <string>Длины</string>
+               <string> Длины</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout">
                <property name="spacing">
@@ -617,11 +683,23 @@
                  <property name="horizontalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
                  </property>
+                 <property name="horizontalScrollMode">
+                  <enum>QAbstractItemView::ScrollPerPixel</enum>
+                 </property>
                  <property name="cornerButtonEnabled">
                   <bool>false</bool>
                  </property>
                  <attribute name="horizontalHeaderVisible">
                   <bool>false</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>5</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
                  </attribute>
                  <attribute name="verticalHeaderVisible">
                   <bool>false</bool>
@@ -701,7 +779,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>413</width>
+                <width>336</width>
                 <height>521</height>
                </rect>
               </property>
@@ -741,9 +819,21 @@
                    <height>51</height>
                   </size>
                  </property>
+                 <property name="horizontalScrollMode">
+                  <enum>QAbstractItemView::ScrollPerPixel</enum>
+                 </property>
                  <property name="cornerButtonEnabled">
                   <bool>false</bool>
                  </property>
+                 <attribute name="horizontalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>5</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                 </widget>
                </item>
                <item>
@@ -797,7 +887,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>412</width>
+                <width>335</width>
                 <height>521</height>
                </rect>
               </property>
@@ -837,9 +927,21 @@
                    <height>51</height>
                   </size>
                  </property>
+                 <property name="horizontalScrollMode">
+                  <enum>QAbstractItemView::ScrollPerPixel</enum>
+                 </property>
                  <property name="cornerButtonEnabled">
                   <bool>false</bool>
                  </property>
+                 <attribute name="horizontalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>5</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                 </widget>
                </item>
                <item>
@@ -893,7 +995,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>104</width>
+                <width>258</width>
                 <height>521</height>
                </rect>
               </property>
@@ -933,9 +1035,21 @@
                    <height>51</height>
                   </size>
                  </property>
+                 <property name="horizontalScrollMode">
+                  <enum>QAbstractItemView::ScrollPerPixel</enum>
+                 </property>
                  <property name="cornerButtonEnabled">
                   <bool>false</bool>
                  </property>
+                 <attribute name="horizontalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>5</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
+                 </attribute>
                 </widget>
                </item>
                <item>
