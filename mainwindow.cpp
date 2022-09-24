@@ -108,7 +108,7 @@ gFE:		Log(up_Logger, LogCat::E, "Невозможно создать файл б
 		QString strFilter = strDayPref + *itDayNames + "'";
 		itDayNames++;
 		std::vector<ColumnRelation> vColumnsRelations = {{2, oDayTablesRelation2}, {3, oDayTablesRelation3}, {4, oDayTablesRelation4}, {6, oDayTablesRelation6}};
-		std::vector<MTableView*> v_p_InfluencingTableViews = {p_UI->tableViewSchedule, p_UI->tableViewContConc, p_UI->tableViewContSpec, p_UI->tableViewDisciplines, p_UI->tableViewLengths};
+		std::vector<MTableView*> v_p_InfluencingTableViews = {p_UI->tableViewSchedule, p_UI->tableViewPConc, p_UI->tableViewPPrep, p_UI->tableViewDisciplines, p_UI->tableViewLengths};
 		InitTable(this, "Расписание", p_DayTable, strFilter, false, 2, nullptr, &v_p_InfluencingTableViews, &vColumnsRelations);
 		p_DayTable->setColumnHidden(1, true);
 	}
@@ -117,13 +117,13 @@ gFE:		Log(up_Logger, LogCat::E, "Невозможно создать файл б
 	// Инициализация вида и модели прод. занятий.
 	InitTable(this, "ДлиныЗанятий", p_UI->tableViewLengths, "", false, 1, &mpLenColsDataTypes);
 	// Инициализация вида и модели предметов.
-	InitTable(this, "Предметы", p_UI->tableViewDisciplines);
+	InitTable(this, "Предметы", p_UI->tableViewDisciplines, "", false);
 	// Инициализация вида и модели контингента спец.
-	InitTable(this, "Контингент", p_UI->tableViewContSpec, strTypePref + "0");
-	p_UI->tableViewContSpec->setColumnHidden(4, true);
+	InitTable(this, "Контингент", p_UI->tableViewPPrep, strTypePref + "0", false);
+	p_UI->tableViewPPrep->setColumnHidden(4, true);
 	// Инициализация вида и модели контингента конц.
-	InitTable(this, "Контингент", p_UI->tableViewContConc, strTypePref + "1");
-	p_UI->tableViewContConc->setColumnHidden(4, true);
+	InitTable(this, "Контингент", p_UI->tableViewPConc, strTypePref + "1", false);
+	p_UI->tableViewPConc->setColumnHidden(4, true);
 	// Завершение.
 	LogS(up_Logger, LogCat::I, "База данных [" << strDBName.toStdString() << "] подключена.", 2);
 	ST("Готов.");

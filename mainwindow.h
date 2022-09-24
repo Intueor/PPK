@@ -65,7 +65,7 @@ private:
 	/// Приминение значений из диалога настроек.
 	void ApplySettingsDialogValues();
 	/// Инициализация вида и модели таблицы.
-	QSqlRelationalTableModel* InitTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter = "", bool bSortEnabled = false, int iColumnForSort = 0,
+	QSqlRelationalTableModel* InitTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter = "", bool bCanScroll = true, int iColumnForSort = 0,
 										const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType>* const p_mpColumnsDataTypes = nullptr,
 										std::vector<MTableView*>* const p_v_p_InfluencingTableViews = nullptr, std::vector<ColumnRelation>* const p_vColumnsRelations = nullptr);
 													///< \param[in] p_Parent Указатель на родительский объект.
