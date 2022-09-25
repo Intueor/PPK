@@ -1,10 +1,47 @@
 //== ВКЛЮЧЕНИЯ.
 #include "mtableview.h"
-#include <QHeaderView>
 #include <QSqlRelationalDelegate>
 
 //== ФУНКЦИИ КЛАССОВ.
+//== Класс модифицированного заголовка виджета вида таблицы.
+// Переопределение обработчика события нажатия мыши.
+void MHeaderView::mousePressEvent(QMouseEvent* p_E)
+{
+	QHeaderView::mousePressEvent(p_E);
+	bMouseDown = true;
+}
+// Переопределение обработчика события смещения мыши.
+void MHeaderView::mouseMoveEvent(QMouseEvent* p_E)
+{
+	QHeaderView::mouseMoveEvent(p_E);
+	if(bMouseDown && _p_v_p_MHorizontalHeaderViewsRelated)
+	{
+		for(MHeaderView* p_MHorizontalHeaderViewRelated : *_p_v_p_MHorizontalHeaderViewsRelated)
+		{
+			for(int iC = 0; iC < this->model()->columnCount(); iC++)
+			{
+				p_MHorizontalHeaderViewRelated->resizeSection(iC, sectionSize(iC));
+			}
+			p_MHorizontalHeaderViewRelated->updateGeometry();
+		}
+	}
+}
+// Переопределение обработчика события отпускания мыши.
+void MHeaderView::mouseReleaseEvent(QMouseEvent* p_E)
+{
+	bMouseDown = false;
+	QHeaderView::mouseReleaseEvent(p_E);
+}
+
 //== Класс модифицированного виджета вида таблицы.
+// Конструктор.
+MTableView::MTableView(QWidget* p_Parent) : QTableView(p_Parent)
+{
+	MHeaderView* p_MHeaderView = new MHeaderView(Qt::Horizontal, this);
+	p_MHeaderView->SetRelatedHorizontalHeaderViews(&v_p_MHorizontalHeaderViewsRelated);
+	setHorizontalHeader(p_MHeaderView);
+}
+
 // Переопределение обновления геометрии для авторасширения без вертикального скроллинга.
 void MTableView::updateGeometries()
 {
@@ -88,4 +125,16 @@ void MTableView::AddRelatedTableView(MTableView* p_MTableViewRelated)
 void MTableView::RemoveRelatedTableView(MTableView* p_MTableViewRelated)
 {
 	v_p_MTableViewsRelated.erase(std::find(v_p_MTableViewsRelated.begin(), v_p_MTableViewsRelated.end(), p_MTableViewRelated));
+}
+
+// Добавление зависимого виджета вида заголовка таблицы.
+void MTableView::AddRelatedHorizontalHeaderView(MHeaderView* p_MHeaderViewRelated)
+{
+	v_p_MHorizontalHeaderViewsRelated.push_back(p_MHeaderViewRelated);
+}
+
+// Удаление зависимого виджета вида заголовка таблицы.
+void MTableView::RemoveRelatedHorizontalHeaderView(MHeaderView* p_MHeaderViewRelated)
+{
+	v_p_MHorizontalHeaderViewsRelated.erase(std::find(v_p_MHorizontalHeaderViewsRelated.begin(), v_p_MHorizontalHeaderViewsRelated.end(), p_MHeaderViewRelated));
 }

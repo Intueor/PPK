@@ -17,7 +17,8 @@ using namespace rapidxml;
 // Инициализация вида и модели таблицы.
 QSqlRelationalTableModel* MainWindow::InitTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter, bool bCanScroll, int iColumnForSort,
 												const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType>* const p_mpColumnsDataTypes,
-												std::vector<MTableView*>* const p_v_p_InfluencingTableViews, std::vector<ColumnRelation>* const p_vColumnsRelations)
+												std::vector<MTableView*>* const p_v_p_InfluencingTableViews, std::vector<ColumnRelation>* const p_vColumnsRelations,
+												std::vector<MHeaderView*>* const p_v_p_MHorizontalHeaderViewsRelated)
 {
 	QSqlRelationalTableModel* p_QSqlRelationalTableModel = new QSqlRelationalTableModel(p_Parent);
 	p_QSqlRelationalTableModel->setTable(r_strTableName);
@@ -34,6 +35,8 @@ QSqlRelationalTableModel* MainWindow::InitTable(QObject* p_Parent, const QString
 		for(auto p_MTableViewTarget : *p_v_p_InfluencingTableViews) p_MTableViewTarget->AddRelatedTableView(p_MTableView);
 	p_MTableView->SetColumnForSort(iColumnForSort);
 	p_MTableView->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
+	if(p_v_p_MHorizontalHeaderViewsRelated)
+		for(MHeaderView* p_MHeaderView : *p_v_p_MHorizontalHeaderViewsRelated) p_MTableView->AddRelatedHorizontalHeaderView(p_MHeaderView);
 	return p_QSqlRelationalTableModel;
 }
 
@@ -88,13 +91,18 @@ gFE:		Log(up_Logger, LogCat::E, "Невозможно создать файл б
 	const QSqlRelation oDayTablesRelation3("Контингент", "Ключ", "Имя");
 	const QSqlRelation oDayTablesRelation4("Предметы", "Ключ", "Предмет");
 	const QSqlRelation oDayTablesRelation6("ДлиныЗанятий", "Ключ", "Длина");
-	for(auto p_DayTable : ar_p_DayTables)
+	for(MTableView* p_DayTable : ar_p_DayTables)
 	{
 		QString strFilter = strDayPref + *itDayNames + "'";
 		itDayNames++;
 		std::vector<ColumnRelation> vColumnsRelations = {{2, oDayTablesRelation2}, {3, oDayTablesRelation3}, {4, oDayTablesRelation4}, {6, oDayTablesRelation6}};
 		std::vector<MTableView*> v_p_InfluencingTableViews = {p_UI->tableViewSchedule, p_UI->tableViewPConc, p_UI->tableViewPPrep, p_UI->tableViewDisciplines, p_UI->tableViewLengths};
-		InitTable(this, "Расписание", p_DayTable, strFilter, false, 2, nullptr, &v_p_InfluencingTableViews, &vColumnsRelations);
+		std::vector<MHeaderView*> v_p_CurrentDayRelatedHeaders;
+		for(auto* p_RHDayTable : ar_p_DayTables)
+		{
+			if(p_DayTable != p_RHDayTable) v_p_CurrentDayRelatedHeaders.push_back(static_cast<MHeaderView*>(p_RHDayTable->horizontalHeader()));
+		}
+		InitTable(this, "Расписание", p_DayTable, strFilter, false, 2, nullptr, &v_p_InfluencingTableViews, &vColumnsRelations, &v_p_CurrentDayRelatedHeaders);
 		p_DayTable->setColumnHidden(1, true);
 	}
 	// Инициализация вида и модели сетки занятий.
@@ -104,10 +112,12 @@ gFE:		Log(up_Logger, LogCat::E, "Невозможно создать файл б
 	// Инициализация вида и модели предметов.
 	InitTable(this, "Предметы", p_UI->tableViewDisciplines, "", false);
 	// Инициализация вида и модели контингента спец.
-	InitTable(this, "Контингент", p_UI->tableViewPPrep, strTypePref + "0", false);
+	std::vector<MHeaderView*> v_p_PPrepRelatedHeaders = {{static_cast<MHeaderView*>(p_UI->tableViewPConc->horizontalHeader())}};
+	InitTable(this, "Контингент", p_UI->tableViewPPrep, strTypePref + "0", false, 0, nullptr, nullptr, nullptr, &v_p_PPrepRelatedHeaders);
 	p_UI->tableViewPPrep->setColumnHidden(4, true);
 	// Инициализация вида и модели контингента конц.
-	InitTable(this, "Контингент", p_UI->tableViewPConc, strTypePref + "1", false);
+	std::vector<MHeaderView*> v_p_PConcRelatedHeaders = {{static_cast<MHeaderView*>(p_UI->tableViewPConc->horizontalHeader())}};
+	InitTable(this, "Контингент", p_UI->tableViewPConc, strTypePref + "1", false, 0, nullptr, nullptr, nullptr, &v_p_PConcRelatedHeaders);
 	p_UI->tableViewPConc->setColumnHidden(4, true);
 	// Загрузка настроек.
 	up_WidgetsSerializer = std::make_unique<WidgetsSerializer>(*p_Settings);
