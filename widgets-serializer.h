@@ -274,12 +274,30 @@ void WidgetsSerializer::SaveStates(const T& r_Widget, bool bIncludeMainGeometry)
 	for(MTableView* p_MTableView : mpWNameToMTableViews[strWName])
 	{
 		int iColls = p_MTableView->model()->columnCount();
-		QString strColls;
+		std::vector<int> vCollSizes;
 		for(int iC = 0; iC < iColls; iC++)
 		{
-			int iColWidth = p_MTableView->columnWidth(iC);
-			if((iC == iColls - 1) && p_MTableView->horizontalHeader()->stretchLastSection()) iColWidth = MIN_AUTO_SIZE_OF_TABLE_H_LAST_SECTION;
-			strColls += QString::number(iColWidth);
+			if(!p_MTableView->isColumnHidden(iC))
+			{
+				vCollSizes.push_back(p_MTableView->columnWidth(iC));
+			}
+			else vCollSizes.push_back(0);
+		}
+		if(p_MTableView->horizontalHeader()->stretchLastSection())
+		{
+			for(auto it = vCollSizes.rbegin(); it != vCollSizes.rend(); ++it)
+			{
+				if(*it != 0)
+				{
+					*it = MIN_AUTO_SIZE_OF_TABLE_H_LAST_SECTION;
+					break;
+				}
+			}
+		}
+		QString strColls;
+		for(auto iWidth : vCollSizes)
+		{
+			strColls += QString::number(iWidth);
 			strColls += ",";
 		}
 		if(!strColls.isEmpty()) strColls.erase(strColls.end() - 1, strColls.end());

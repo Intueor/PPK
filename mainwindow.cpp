@@ -116,7 +116,7 @@ gFE:		Log(up_Logger, LogCat::E, "Невозможно создать файл б
 	InitTable(this, "Контингент", p_UI->tableViewPPrep, strTypePref + "0", false, 0, nullptr, nullptr, nullptr, &v_p_PPrepRelatedHeaders);
 	p_UI->tableViewPPrep->setColumnHidden(4, true);
 	// Инициализация вида и модели контингента конц.
-	std::vector<MHeaderView*> v_p_PConcRelatedHeaders = {{static_cast<MHeaderView*>(p_UI->tableViewPConc->horizontalHeader())}};
+	std::vector<MHeaderView*> v_p_PConcRelatedHeaders = {{static_cast<MHeaderView*>(p_UI->tableViewPPrep->horizontalHeader())}};
 	InitTable(this, "Контингент", p_UI->tableViewPConc, strTypePref + "1", false, 0, nullptr, nullptr, nullptr, &v_p_PConcRelatedHeaders);
 	p_UI->tableViewPConc->setColumnHidden(4, true);
 	// Загрузка настроек.
