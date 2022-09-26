@@ -16,6 +16,18 @@ void MHeaderView::mouseMoveEvent(QMouseEvent* p_E)
 	QHeaderView::mouseMoveEvent(p_E);
 	if(bMouseDown && _p_v_p_MHorizontalHeaderViewsRelated)
 	{
+		MTableView* p_MTableView = static_cast<MTableView*>(parent());
+		if(p_MTableView && stretchLastSection())
+		{
+			for(int iR = model()->columnCount(); iR > 0; iR--)
+			{
+				if(!p_MTableView->isColumnHidden(iR))
+				{
+					p_MTableView->setColumnWidth(iR, 5);
+					break;
+				}
+			}
+		}
 		for(MHeaderView* p_MHorizontalHeaderViewRelated : *_p_v_p_MHorizontalHeaderViewsRelated)
 		{
 			for(int iC = 0; iC < this->model()->columnCount(); iC++)
