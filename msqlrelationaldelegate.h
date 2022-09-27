@@ -11,6 +11,7 @@ class MSqlRelationalDelegate : public QSqlRelationalDelegate
 	Q_OBJECT
 
 public:
+	/// Перечисление типов делегатов по виду данных.
 	enum CustomDelegateType
 	{
 		Positive,
@@ -18,7 +19,7 @@ public:
 	};
 
 private:
-	const std::map<uchar, CustomDelegateType>* const _p_mpColumnsDataTypes;
+	const std::map<uchar, CustomDelegateType>* const _p_mpColumnsDataTypes; ///< Внутренний константный указатель на константную карту 'колонка в тип данных'.
 
 private:
 	/// Копия приватной функции получения индекса поля из базового класса.

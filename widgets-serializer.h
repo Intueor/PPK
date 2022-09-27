@@ -16,8 +16,9 @@
 #include <QHeaderView>
 
 //== МАКРОСЫ.
-#define MkWidgetName(widget,suffix)				widget+"-"+suffix
-#define MkChildName(parent,widget,suffix)		parent+"-"+MkWidgetName(widget,suffix)
+//! \file widgets-serializer.h
+#define MkWidgetName(widget,suffix)				widget+"-"+suffix ///< Макрос создания имени виджета для сохранения с 'расширением'.
+#define MkChildName(parent,widget,suffix)		parent+"-"+MkWidgetName(widget,suffix) ///< Макрос создания имени виджета для сохранения с 'расширением' с префиксом родителя.
 
 //== КЛАССЫ.
 /// Класс сериализатора виджетов.

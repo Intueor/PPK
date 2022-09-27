@@ -7,22 +7,21 @@
 //== ФУНКЦИИ КЛАССОВ.
 //== Класс модифицированного заголовка виджета вида таблицы.
 // Переопределение обработчика события нажатия мыши.
-void MHeaderView::mousePressEvent(QMouseEvent* p_E)
+void MHorizontalHeaderView::mousePressEvent(QMouseEvent* p_E)
 {
 	QHeaderView::mousePressEvent(p_E);
 	if(_p_v_p_MHorizontalHeaderViewsRelated) bMPressed = true;
 }
 
 // Переопределение обработчика события смещения мыши.
-void MHeaderView::mouseMoveEvent(QMouseEvent* p_E)
+void MHorizontalHeaderView::mouseMoveEvent(QMouseEvent* p_E)
 {
 	QHeaderView::mouseMoveEvent(p_E);
 	if(bMPressed)
 	{
 		int iVHWidth = static_cast<MTableView*>(parent())->verticalHeader()->width();
-		for(MHeaderView* p_MHorizontalHeaderViewRelated : *_p_v_p_MHorizontalHeaderViewsRelated)
+		for(MHorizontalHeaderView* p_MHorizontalHeaderViewRelated : *_p_v_p_MHorizontalHeaderViewsRelated)
 		{
-
 			int iVHWidthRelated = static_cast<MTableView*>(p_MHorizontalHeaderViewRelated->parent())->verticalHeader()->width();
 			bool bFirstVisibleFound = false;
 			int iFirstVisibleSection = 0;
@@ -37,6 +36,8 @@ void MHeaderView::mouseMoveEvent(QMouseEvent* p_E)
 				if(bFirstVisibleFound && iFirstVisibleSection == iC)
 				{
 					iSize += iVHWidth - iVHWidthRelated;
+					int iD = static_cast<MTableView*>(parent())->width() - static_cast<MTableView*>(p_MHorizontalHeaderViewRelated->parent())->width();
+					if(iD != 0) iSize -= iD;
 				}
 				int iSizeRelated = p_MHorizontalHeaderViewRelated->sectionSize(iC);
 				if(iSizeRelated != iSize)
@@ -49,7 +50,7 @@ void MHeaderView::mouseMoveEvent(QMouseEvent* p_E)
 }
 
 // Переопределение обработчика события отпускания мыши.
-void MHeaderView::mouseReleaseEvent(QMouseEvent* p_E)
+void MHorizontalHeaderView::mouseReleaseEvent(QMouseEvent* p_E)
 {
 	bMPressed = false;
 	QHeaderView::mouseReleaseEvent(p_E);
@@ -59,9 +60,16 @@ void MHeaderView::mouseReleaseEvent(QMouseEvent* p_E)
 // Конструктор.
 MTableView::MTableView(QWidget* p_Parent) : QTableView(p_Parent)
 {
-	MHeaderView* p_MHeaderView = new MHeaderView(Qt::Horizontal, this);
-	p_MHeaderView->SetRelatedHorizontalHeaderViews(&v_p_MHorizontalHeaderViewsRelated);
-	setHorizontalHeader(p_MHeaderView);
+	connect(&oAntiSpamTimer, SIGNAL(timeout()), this, SLOT(AntiSpamTimerSlot()));
+	oAntiSpamTimer.start(STARTUP_UPDATE_ANTISPAM_DELAY_MS);
+	MHorizontalHeaderView* p_MHorizontalHeaderView = new MHorizontalHeaderView(Qt::Horizontal, this);
+	p_MHorizontalHeaderView->SetRelatedHorizontalHeaderViews(&v_p_MHorizontalHeaderViewsRelated);
+	setHorizontalHeader(p_MHorizontalHeaderView);
+}
+
+void MTableView::AntiSpamTimerSlot()
+{
+	bStartupSpamIsOver = true;
 }
 
 // Переопределение обновления геометрии для авторасширения без вертикального скроллинга.
@@ -86,21 +94,25 @@ void MTableView::updateGeometries()
 			}
 		}
 	}
-	if(model() && bOverridedStretchLastSection)
+	if(bStartupSpamIsOver)
 	{
-		int iHContentWidth = 0;
-		int iLastVisible = 0;
-		for(int iC = 0; iC < model()->columnCount(); iC++)
+		if(model() && bOverridedStretchLastSection)
 		{
-			if(!isColumnHidden(iC)) iLastVisible = iC;
-			iHContentWidth += columnWidth(iC);
-		}
-		int iHorizontalRightSpace = horizontalHeader()->width() - iHContentWidth;
-		if(iHorizontalRightSpace > 0)
-		{
-			setColumnWidth(iLastVisible, columnWidth(iLastVisible) + iHorizontalRightSpace);
+			int iHContentWidth = 0;
+			int iLastVisible = 0;
+			for(int iC = 0; iC < model()->columnCount(); iC++)
+			{
+				if(!isColumnHidden(iC)) iLastVisible = iC;
+				iHContentWidth += columnWidth(iC);
+			}
+			int iHorizontalRightSpace = horizontalHeader()->width() - iHContentWidth;
+			if(iHorizontalRightSpace > 0)
+			{
+				setColumnWidth(iLastVisible, columnWidth(iLastVisible) + iHorizontalRightSpace);
+			}
 		}
 	}
+	else oAntiSpamTimer.start(STARTUP_UPDATE_ANTISPAM_DELAY_MS);
 	QTableView::updateGeometries();
 }
 
@@ -165,13 +177,13 @@ void MTableView::RemoveRelatedTableView(MTableView* p_MTableViewRelated)
 }
 
 // Добавление зависимого виджета вида заголовка таблицы.
-void MTableView::AddRelatedHorizontalHeaderView(MHeaderView* p_MHeaderViewRelated)
+void MTableView::AddRelatedHorizontalHeaderView(MHorizontalHeaderView* p_MHorizontalHeaderViewRelated)
 {
-	v_p_MHorizontalHeaderViewsRelated.push_back(p_MHeaderViewRelated);
+	v_p_MHorizontalHeaderViewsRelated.push_back(p_MHorizontalHeaderViewRelated);
 }
 
 // Удаление зависимого виджета вида заголовка таблицы.
-void MTableView::RemoveRelatedHorizontalHeaderView(MHeaderView* p_MHeaderViewRelated)
+void MTableView::RemoveRelatedHorizontalHeaderView(MHorizontalHeaderView* p_MHorizontalHeaderViewRelated)
 {
-	v_p_MHorizontalHeaderViewsRelated.erase(std::find(v_p_MHorizontalHeaderViewsRelated.begin(), v_p_MHorizontalHeaderViewsRelated.end(), p_MHeaderViewRelated));
+	v_p_MHorizontalHeaderViewsRelated.erase(std::find(v_p_MHorizontalHeaderViewsRelated.begin(), v_p_MHorizontalHeaderViewsRelated.end(), p_MHorizontalHeaderViewRelated));
 }

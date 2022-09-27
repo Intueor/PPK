@@ -5,9 +5,9 @@
 #include <QSqlError>
 
 //== МАКРОСЫ.
-#define STATUS_DELAY	3000
-#define ST(m)			oLabelStatus.setText(m)
-#define SM(m)			p_UI->statusbar->showMessage(m, STATUS_DELAY)
+#define STATUS_SHOW_TIME_MS	3000
+#define ST(m)				oLabelStatus.setText(m)
+#define SM(m)				p_UI->statusbar->showMessage(m, STATUS_SHOW_TIME_MS)
 
 //== ПРОСТРАНСТВА ИМЁН.
 using namespace rapidxml;
@@ -18,7 +18,7 @@ using namespace rapidxml;
 QSqlRelationalTableModel* MainWindow::InitTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter, bool bCanScroll, int iColumnForSort,
 												bool bStretchLastHSection, const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType>* const p_mpColumnsDataTypes,
 												std::vector<MTableView*>* const p_v_p_InfluencingTableViews, std::vector<ColumnRelation>* const p_vColumnsRelations,
-												std::vector<MHeaderView*>* const p_v_p_MHorizontalHeaderViewsRelated)
+												std::vector<MHorizontalHeaderView*>* const p_v_p_MHorizontalHeaderViewsRelated)
 {
 	QSqlRelationalTableModel* p_QSqlRelationalTableModel = new QSqlRelationalTableModel(p_Parent);
 	p_QSqlRelationalTableModel->setTable(r_strTableName);
@@ -36,7 +36,7 @@ QSqlRelationalTableModel* MainWindow::InitTable(QObject* p_Parent, const QString
 	p_MTableView->SetColumnForSort(iColumnForSort);
 	p_MTableView->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
 	if(p_v_p_MHorizontalHeaderViewsRelated)
-		for(MHeaderView* p_MHeaderView : *p_v_p_MHorizontalHeaderViewsRelated) p_MTableView->AddRelatedHorizontalHeaderView(p_MHeaderView);
+		for(MHorizontalHeaderView* p_MHorizontalHeaderView : *p_v_p_MHorizontalHeaderViewsRelated) p_MTableView->AddRelatedHorizontalHeaderView(p_MHorizontalHeaderView);
 	p_MTableView->SetOverridedStretchLastHSection(bStretchLastHSection);
 	return p_QSqlRelationalTableModel;
 }
@@ -98,10 +98,10 @@ gFE:		Log(up_Logger, LogCat::E, "Невозможно создать файл б
 		itDayNames++;
 		std::vector<ColumnRelation> vColumnsRelations = {{2, oDayTablesRelation2}, {3, oDayTablesRelation3}, {4, oDayTablesRelation4}, {6, oDayTablesRelation6}};
 		std::vector<MTableView*> v_p_InfluencingTableViews = {p_UI->tableViewSchedule, p_UI->tableViewPConc, p_UI->tableViewPPrep, p_UI->tableViewDisciplines, p_UI->tableViewLengths};
-		std::vector<MHeaderView*> v_p_CurrentDayRelatedHeaders;
+		std::vector<MHorizontalHeaderView*> v_p_CurrentDayRelatedHeaders;
 		for(auto* p_RHDayTable : ar_p_DayTables)
 		{
-			if(p_DayTable != p_RHDayTable) v_p_CurrentDayRelatedHeaders.push_back(static_cast<MHeaderView*>(p_RHDayTable->horizontalHeader()));
+			if(p_DayTable != p_RHDayTable) v_p_CurrentDayRelatedHeaders.push_back(static_cast<MHorizontalHeaderView*>(p_RHDayTable->horizontalHeader()));
 		}
 		InitTable(this, "Расписание", p_DayTable, strFilter, false, 2, true, nullptr, &v_p_InfluencingTableViews, &vColumnsRelations, &v_p_CurrentDayRelatedHeaders);
 		p_DayTable->setColumnHidden(1, true);
@@ -113,11 +113,11 @@ gFE:		Log(up_Logger, LogCat::E, "Невозможно создать файл б
 	// Инициализация вида и модели предметов.
 	InitTable(this, "Предметы", p_UI->tableViewDisciplines, "", false, 0, true);
 	// Инициализация вида и модели контингента спец.
-	std::vector<MHeaderView*> v_p_PPrepRelatedHeaders = {{static_cast<MHeaderView*>(p_UI->tableViewPConc->horizontalHeader())}};
+	std::vector<MHorizontalHeaderView*> v_p_PPrepRelatedHeaders = {{static_cast<MHorizontalHeaderView*>(p_UI->tableViewPConc->horizontalHeader())}};
 	InitTable(this, "Контингент", p_UI->tableViewPPrep, strTypePref + "0", false, 0, true, nullptr, nullptr, nullptr, &v_p_PPrepRelatedHeaders);
 	p_UI->tableViewPPrep->setColumnHidden(4, true);
 	// Инициализация вида и модели контингента конц.
-	std::vector<MHeaderView*> v_p_PConcRelatedHeaders = {{static_cast<MHeaderView*>(p_UI->tableViewPPrep->horizontalHeader())}};
+	std::vector<MHorizontalHeaderView*> v_p_PConcRelatedHeaders = {{static_cast<MHorizontalHeaderView*>(p_UI->tableViewPPrep->horizontalHeader())}};
 	InitTable(this, "Контингент", p_UI->tableViewPConc, strTypePref + "1", false, 0, true, nullptr, nullptr, nullptr, &v_p_PConcRelatedHeaders);
 	p_UI->tableViewPConc->setColumnHidden(4, true);
 	// Загрузка настроек.

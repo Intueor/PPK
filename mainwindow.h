@@ -68,7 +68,7 @@ private:
 	QSqlRelationalTableModel* InitTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter = "", bool bCanScroll = true, int iColumnForSort = 0,
 										bool bStretchLastHSection = false, const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType>* const p_mpColumnsDataTypes = nullptr,
 										std::vector<MTableView*>* const p_v_p_InfluencingTableViews = nullptr, std::vector<ColumnRelation>* const p_vColumnsRelations = nullptr,
-										std::vector<MHeaderView*>* const p_v_p_MHorizontalHeaderViewsRelated = nullptr);
+										std::vector<MHorizontalHeaderView*>* const p_v_p_MHorizontalHeaderViewsRelated = nullptr);
 													///< \param[in] p_Parent Указатель на родительский объект.
 													///< \param[in] r_strTableName Ссылка на конст. строку с именем таблицы.
 													///< \param[in] p_MTableView Указатель на виджет вида таблицы.
