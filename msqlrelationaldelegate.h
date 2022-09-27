@@ -45,7 +45,6 @@ public:
 														///< \param[in] p_Editor Указатель на редактор.
 														///< \param[in] p_Model Указатель на модель.
 														///< \param[in] r_Index Константная ссылка на индекс.
-
 };
 
 #endif // MSQLRELATIONALDELEGATE_H

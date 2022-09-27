@@ -16,7 +16,6 @@
 #include <QHeaderView>
 
 //== МАКРОСЫ.
-#define MIN_AUTO_SIZE_OF_TABLE_H_LAST_SECTION	5
 #define MkWidgetName(widget,suffix)				widget+"-"+suffix
 #define MkChildName(parent,widget,suffix)		parent+"-"+MkWidgetName(widget,suffix)
 
@@ -84,10 +83,9 @@ private:
 
 public:
 	/// Конструктор.
-	WidgetsSerializer(QSettings& r_Settings)
-										//! \param[in] r_Settings Ссылка на настройки.
-		: _r_Settings(r_Settings) {}
-
+	WidgetsSerializer(QSettings& r_Settings) : _r_Settings(r_Settings)
+										///< \param[in] r_Settings Ссылка на настройки.
+	{}
 	/// Регистрация дочерних элементов виджета.
 	template <typename T>
 	void RegisterChildren(const T& r_Widget);
@@ -282,17 +280,6 @@ void WidgetsSerializer::SaveStates(const T& r_Widget, bool bIncludeMainGeometry)
 				vCollSizes.push_back(p_MTableView->columnWidth(iC));
 			}
 			else vCollSizes.push_back(0);
-		}
-		if(p_MTableView->horizontalHeader()->stretchLastSection())
-		{
-			for(auto it = vCollSizes.rbegin(); it != vCollSizes.rend(); ++it)
-			{
-				if(*it != 0)
-				{
-					*it = MIN_AUTO_SIZE_OF_TABLE_H_LAST_SECTION;
-					break;
-				}
-			}
 		}
 		QString strColls;
 		for(auto iWidth : vCollSizes)

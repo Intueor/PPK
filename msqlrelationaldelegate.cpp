@@ -68,6 +68,5 @@ void MSqlRelationalDelegate::setModelData(QWidget* p_Editor, QAbstractItemModel*
 		}
 
 	}
-
 	QSqlRelationalDelegate::setModelData(p_Editor, p_Model, r_Index);
 }

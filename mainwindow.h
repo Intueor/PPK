@@ -66,7 +66,7 @@ private:
 	void ApplySettingsDialogValues();
 	/// Инициализация вида и модели таблицы.
 	QSqlRelationalTableModel* InitTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter = "", bool bCanScroll = true, int iColumnForSort = 0,
-										const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType>* const p_mpColumnsDataTypes = nullptr,
+										bool bStretchLastHSection = false, const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType>* const p_mpColumnsDataTypes = nullptr,
 										std::vector<MTableView*>* const p_v_p_InfluencingTableViews = nullptr, std::vector<ColumnRelation>* const p_vColumnsRelations = nullptr,
 										std::vector<MHeaderView*>* const p_v_p_MHorizontalHeaderViewsRelated = nullptr);
 													///< \param[in] p_Parent Указатель на родительский объект.
@@ -75,6 +75,7 @@ private:
 													///< \param[in] r_strFilter Ссылка на конст. строку с фильтром.
 													///< \param[in] bCanScroll При false - расширение вертикального разм. таблицы под контент.
 													///< \param[in] iColumnForSort 0 - для отсутствия сортировки или номер колонки.
+													///< \param[in] bStretchLastHSection true - для переопределённого растяжения последней видимой секции горизонтального заголовка.
 													///< \param[in] p_mpColumnsDataTypes Константный указатель на константную карту 'колонка в тип данных' или nullptr.
 													///< \param[in] p_v_p_InfluencingTableViews Константный ук. на вектор указателей на виджеты вида таблиц, которые могут менять контент текущего виджета вида.
 													///< \param[in] p_vColumnsRelations Константный указатель на вектор стрктур, описывающих отношение столбцов таблицы к столбцам других.

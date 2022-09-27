@@ -14,7 +14,7 @@ class Q_WIDGETS_EXPORT MHeaderView : public QHeaderView
 	Q_OBJECT
 
 private:
-	bool bMouseDown = false; ///< При true - мышь нажата и держится.
+	bool bMPressed = false; ///< Признак нажатой мыши при имеющемся векторе указателей на зависимые виджеты вида заголовков окон.
 	std::vector<MHeaderView*>* _p_v_p_MHorizontalHeaderViewsRelated; ///< Внутренний указатель на вектор указателей на зависимые виджеты вида заголовков окон.
 
 public:
@@ -50,6 +50,7 @@ private:
 	std::vector<MTableView*> v_p_MTableViewsRelated; ///< Вектор указателей на зависимые виджеты вида таблиц.
 	std::vector<MHeaderView*> v_p_MHorizontalHeaderViewsRelated; ///< Вектор указателей на зависимые виджеты вида заголовков таблиц.
 	int _iColumnForSort = 0; ///< При не 0 - колонка для автосортировки.
+	bool bOverridedStretchLastSection = false; ///< Признак переопределённого растяжения последней видимой секции горизонтального заголовка.
 
 private:
 	/// Переопределение обновления геометрии для авторасширения без вертикального скроллинга.
@@ -66,6 +67,10 @@ public:
 	/// Установка колонки для автосортировки или 0.
 	void SetColumnForSort(int iColumnForSort);
 													///< \param[in] iColumnForSort Колонка для автосортировки или 0.
+	/// Установка растяжения последней секции горизонтального заголовка (дефолтный не ипользовать).
+	void SetOverridedStretchLastHSection(bool bOn)
+													///< \param[in] bOn Переопределённый признак растяжения.
+	{ bOverridedStretchLastSection = bOn; }
 	/// Установка или отмена возможности вертикального скроллинга виджета.
 	void SetCanScroll(bool bCanScroll)
 													///< \param[in] bCanScroll При true - возможен.

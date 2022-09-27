@@ -1,6 +1,8 @@
 //== ВКЛЮЧЕНИЯ.
 #include "mtableview.h"
 #include <QSqlRelationalDelegate>
+#include <QMouseEvent>
+#include <QScrollArea>
 
 //== ФУНКЦИИ КЛАССОВ.
 //== Класс модифицированного заголовка виджета вида таблицы.
@@ -8,40 +10,48 @@
 void MHeaderView::mousePressEvent(QMouseEvent* p_E)
 {
 	QHeaderView::mousePressEvent(p_E);
-	bMouseDown = true;
+	if(_p_v_p_MHorizontalHeaderViewsRelated) bMPressed = true;
 }
+
 // Переопределение обработчика события смещения мыши.
 void MHeaderView::mouseMoveEvent(QMouseEvent* p_E)
 {
 	QHeaderView::mouseMoveEvent(p_E);
-	if(bMouseDown && _p_v_p_MHorizontalHeaderViewsRelated)
+	if(bMPressed)
 	{
-		MTableView* p_MTableView = static_cast<MTableView*>(parent());
-		if(p_MTableView && stretchLastSection())
+		int iVHWidth = static_cast<MTableView*>(parent())->verticalHeader()->width();
+		for(MHeaderView* p_MHorizontalHeaderViewRelated : *_p_v_p_MHorizontalHeaderViewsRelated)
 		{
-			for(int iR = model()->columnCount(); iR > 0; iR--)
+
+			int iVHWidthRelated = static_cast<MTableView*>(p_MHorizontalHeaderViewRelated->parent())->verticalHeader()->width();
+			bool bFirstVisibleFound = false;
+			int iFirstVisibleSection = 0;
+			for(int iC = 0; iC < this->model()->columnCount(); iC++)
 			{
-				if(!p_MTableView->isColumnHidden(iR))
+				if(!p_MHorizontalHeaderViewRelated->isSectionHidden(iC) && !bFirstVisibleFound)
 				{
-					p_MTableView->setColumnWidth(iR, 5);
-					break;
+					bFirstVisibleFound = true;
+					iFirstVisibleSection = iC;
+				}
+				int iSize = sectionSize(iC);
+				if(bFirstVisibleFound && iFirstVisibleSection == iC)
+				{
+					iSize += iVHWidth - iVHWidthRelated;
+				}
+				int iSizeRelated = p_MHorizontalHeaderViewRelated->sectionSize(iC);
+				if(iSizeRelated != iSize)
+				{
+					p_MHorizontalHeaderViewRelated->resizeSection(iC, iSize);
 				}
 			}
 		}
-		for(MHeaderView* p_MHorizontalHeaderViewRelated : *_p_v_p_MHorizontalHeaderViewsRelated)
-		{
-			for(int iC = 0; iC < this->model()->columnCount(); iC++)
-			{
-				p_MHorizontalHeaderViewRelated->resizeSection(iC, sectionSize(iC));
-			}
-			p_MHorizontalHeaderViewRelated->updateGeometry();
-		}
 	}
 }
+
 // Переопределение обработчика события отпускания мыши.
 void MHeaderView::mouseReleaseEvent(QMouseEvent* p_E)
 {
-	bMouseDown = false;
+	bMPressed = false;
 	QHeaderView::mouseReleaseEvent(p_E);
 }
 
@@ -72,8 +82,23 @@ void MTableView::updateGeometries()
 					iAllRowsHeight += rowHeight(iCurRow);
 				}
 				iLastRQ = iRQ;
-				setFixedHeight(iAllRowsHeight + horizontalHeader()->height() + this->verticalHeader()->height());
+				setFixedHeight(iAllRowsHeight + horizontalHeader()->height() + verticalHeader()->height());
 			}
+		}
+	}
+	if(model() && bOverridedStretchLastSection)
+	{
+		int iHContentWidth = 0;
+		int iLastVisible = 0;
+		for(int iC = 0; iC < model()->columnCount(); iC++)
+		{
+			if(!isColumnHidden(iC)) iLastVisible = iC;
+			iHContentWidth += columnWidth(iC);
+		}
+		int iHorizontalRightSpace = horizontalHeader()->width() - iHContentWidth;
+		if(iHorizontalRightSpace > 0)
+		{
+			setColumnWidth(iLastVisible, columnWidth(iLastVisible) + iHorizontalRightSpace);
 		}
 	}
 	QTableView::updateGeometries();

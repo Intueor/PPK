@@ -16,7 +16,7 @@ using namespace rapidxml;
 //== Класс главного окна.
 // Инициализация вида и модели таблицы.
 QSqlRelationalTableModel* MainWindow::InitTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter, bool bCanScroll, int iColumnForSort,
-												const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType>* const p_mpColumnsDataTypes,
+												bool bStretchLastHSection, const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType>* const p_mpColumnsDataTypes,
 												std::vector<MTableView*>* const p_v_p_InfluencingTableViews, std::vector<ColumnRelation>* const p_vColumnsRelations,
 												std::vector<MHeaderView*>* const p_v_p_MHorizontalHeaderViewsRelated)
 {
@@ -37,6 +37,7 @@ QSqlRelationalTableModel* MainWindow::InitTable(QObject* p_Parent, const QString
 	p_MTableView->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
 	if(p_v_p_MHorizontalHeaderViewsRelated)
 		for(MHeaderView* p_MHeaderView : *p_v_p_MHorizontalHeaderViewsRelated) p_MTableView->AddRelatedHorizontalHeaderView(p_MHeaderView);
+	p_MTableView->SetOverridedStretchLastHSection(bStretchLastHSection);
 	return p_QSqlRelationalTableModel;
 }
 
@@ -102,22 +103,22 @@ gFE:		Log(up_Logger, LogCat::E, "Невозможно создать файл б
 		{
 			if(p_DayTable != p_RHDayTable) v_p_CurrentDayRelatedHeaders.push_back(static_cast<MHeaderView*>(p_RHDayTable->horizontalHeader()));
 		}
-		InitTable(this, "Расписание", p_DayTable, strFilter, false, 2, nullptr, &v_p_InfluencingTableViews, &vColumnsRelations, &v_p_CurrentDayRelatedHeaders);
+		InitTable(this, "Расписание", p_DayTable, strFilter, false, 2, true, nullptr, &v_p_InfluencingTableViews, &vColumnsRelations, &v_p_CurrentDayRelatedHeaders);
 		p_DayTable->setColumnHidden(1, true);
 	}
 	// Инициализация вида и модели сетки занятий.
-	InitTable(this, "СеткаЗанятий", p_UI->tableViewSchedule, "", false, 1, &mpSchedColsDataTypes);
+	InitTable(this, "СеткаЗанятий", p_UI->tableViewSchedule, "", false, 1, true, &mpSchedColsDataTypes);
 	// Инициализация вида и модели прод. занятий.
-	InitTable(this, "ДлиныЗанятий", p_UI->tableViewLengths, "", false, 1, &mpLenColsDataTypes);
+	InitTable(this, "ДлиныЗанятий", p_UI->tableViewLengths, "", false, 1, true, &mpLenColsDataTypes);
 	// Инициализация вида и модели предметов.
-	InitTable(this, "Предметы", p_UI->tableViewDisciplines, "", false);
+	InitTable(this, "Предметы", p_UI->tableViewDisciplines, "", false, 0, true);
 	// Инициализация вида и модели контингента спец.
 	std::vector<MHeaderView*> v_p_PPrepRelatedHeaders = {{static_cast<MHeaderView*>(p_UI->tableViewPConc->horizontalHeader())}};
-	InitTable(this, "Контингент", p_UI->tableViewPPrep, strTypePref + "0", false, 0, nullptr, nullptr, nullptr, &v_p_PPrepRelatedHeaders);
+	InitTable(this, "Контингент", p_UI->tableViewPPrep, strTypePref + "0", false, 0, true, nullptr, nullptr, nullptr, &v_p_PPrepRelatedHeaders);
 	p_UI->tableViewPPrep->setColumnHidden(4, true);
 	// Инициализация вида и модели контингента конц.
 	std::vector<MHeaderView*> v_p_PConcRelatedHeaders = {{static_cast<MHeaderView*>(p_UI->tableViewPPrep->horizontalHeader())}};
-	InitTable(this, "Контингент", p_UI->tableViewPConc, strTypePref + "1", false, 0, nullptr, nullptr, nullptr, &v_p_PConcRelatedHeaders);
+	InitTable(this, "Контингент", p_UI->tableViewPConc, strTypePref + "1", false, 0, true, nullptr, nullptr, nullptr, &v_p_PConcRelatedHeaders);
 	p_UI->tableViewPConc->setColumnHidden(4, true);
 	// Загрузка настроек.
 	up_WidgetsSerializer = std::make_unique<WidgetsSerializer>(*p_Settings);
