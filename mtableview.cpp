@@ -187,3 +187,4 @@ void MTableView::RemoveRelatedHorizontalHeaderView(MHorizontalHeaderView* p_MHor
 {
 	v_p_MHorizontalHeaderViewsRelated.erase(std::find(v_p_MHorizontalHeaderViewsRelated.begin(), v_p_MHorizontalHeaderViewsRelated.end(), p_MHorizontalHeaderViewRelated));
 }
+

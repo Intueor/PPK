@@ -4,18 +4,47 @@
 #include "ui_dialog-settings.h"
 #include <QSqlError>
 
-//== МАКРОСЫ.
-#define STATUS_SHOW_TIME_MS	3000
+//== МАКРОСЫ И КОНСТАНТЫ.
 #define ST(m)				oLabelStatus.setText(m)
 #define SM(m)				p_UI->statusbar->showMessage(m, STATUS_SHOW_TIME_MS)
+// МЕНЮ ПКМ ДНЕЙ НЕДЕЛИ.
+#define MENU_NEW_LESSON_ROW				1
+const char m_chMenuNewLessonRow[] =		"Новый урок";
 
 //== ПРОСТРАНСТВА ИМЁН.
 using namespace rapidxml;
 
 //== ФУНКЦИИ КЛАССОВ.
+//== Класс модифицированного меню.
+// Переопределение функции обработки нажатия мыши.
+void SafeMenu::mousePressEvent(QMouseEvent* p_Event)
+{
+	if((p_Event->button() == Qt::MouseButton::RightButton) &
+	   ((p_Event->pos().x() > pos().x()) & (p_Event->pos().y() > pos().y())))
+	{
+		return;
+	}
+	QMenu::mousePressEvent(p_Event);
+}
+
+// Переопределение функции обработки перемещения мыши.
+void SafeMenu::mouseMoveEvent(QMouseEvent* p_Event)
+{
+	if(p_Event->button() == Qt::MouseButton::RightButton) return;
+	QMenu::mouseMoveEvent(p_Event);
+}
+
+// Переопределение функции обработки отпускания мыши.
+void SafeMenu::mouseReleaseEvent(QMouseEvent* p_Event)
+{
+	if(p_Event->button() == Qt::MouseButton::RightButton) return;
+	QMenu::mouseReleaseEvent(p_Event);
+}
+
+
 //== Класс главного окна.
-// Инициализация вида и модели таблицы.
-QSqlRelationalTableModel* MainWindow::InitTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter, bool bCanScroll, int iColumnForSort,
+// Инициализация вида и модели модифицированной таблицы.
+QSqlRelationalTableModel* MainWindow::InitMTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter, bool bCanScroll, int iColumnForSort,
 												bool bStretchLastHSection, const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType>* const p_mpColumnsDataTypes,
 												std::vector<MTableView*>* const p_v_p_InfluencingTableViews, std::vector<ColumnRelation>* const p_vColumnsRelations,
 												std::vector<MHorizontalHeaderView*>* const p_v_p_MHorizontalHeaderViewsRelated)
@@ -103,22 +132,22 @@ gFE:		Log(up_Logger, LogCat::E, "Невозможно создать файл б
 		{
 			if(p_DayTable != p_RHDayTable) v_p_CurrentDayRelatedHeaders.push_back(static_cast<MHorizontalHeaderView*>(p_RHDayTable->horizontalHeader()));
 		}
-		InitTable(this, "Расписание", p_DayTable, strFilter, false, 2, true, nullptr, &v_p_InfluencingTableViews, &vColumnsRelations, &v_p_CurrentDayRelatedHeaders);
+		InitMTable(this, "Расписание", p_DayTable, strFilter, false, 2, true, nullptr, &v_p_InfluencingTableViews, &vColumnsRelations, &v_p_CurrentDayRelatedHeaders);
 		p_DayTable->setColumnHidden(1, true);
 	}
 	// Инициализация вида и модели сетки занятий.
-	InitTable(this, "СеткаЗанятий", p_UI->tableViewSchedule, "", false, 1, true, &mpSchedColsDataTypes);
+	InitMTable(this, "СеткаЗанятий", p_UI->tableViewSchedule, "", false, 1, true, &mpSchedColsDataTypes);
 	// Инициализация вида и модели прод. занятий.
-	InitTable(this, "ДлиныЗанятий", p_UI->tableViewLengths, "", false, 1, true, &mpLenColsDataTypes);
+	InitMTable(this, "ДлиныЗанятий", p_UI->tableViewLengths, "", false, 1, true, &mpLenColsDataTypes);
 	// Инициализация вида и модели предметов.
-	InitTable(this, "Предметы", p_UI->tableViewDisciplines, "", false, 0, true);
+	InitMTable(this, "Предметы", p_UI->tableViewDisciplines, "", false, 0, true);
 	// Инициализация вида и модели контингента спец.
 	std::vector<MHorizontalHeaderView*> v_p_PPrepRelatedHeaders = {{static_cast<MHorizontalHeaderView*>(p_UI->tableViewPConc->horizontalHeader())}};
-	InitTable(this, "Контингент", p_UI->tableViewPPrep, strTypePref + "0", false, 0, true, nullptr, nullptr, nullptr, &v_p_PPrepRelatedHeaders);
+	InitMTable(this, "Контингент", p_UI->tableViewPPrep, strTypePref + "0", false, 0, true, nullptr, nullptr, nullptr, &v_p_PPrepRelatedHeaders);
 	p_UI->tableViewPPrep->setColumnHidden(4, true);
 	// Инициализация вида и модели контингента конц.
 	std::vector<MHorizontalHeaderView*> v_p_PConcRelatedHeaders = {{static_cast<MHorizontalHeaderView*>(p_UI->tableViewPPrep->horizontalHeader())}};
-	InitTable(this, "Контингент", p_UI->tableViewPConc, strTypePref + "1", false, 0, true, nullptr, nullptr, nullptr, &v_p_PConcRelatedHeaders);
+	InitMTable(this, "Контингент", p_UI->tableViewPConc, strTypePref + "1", false, 0, true, nullptr, nullptr, nullptr, &v_p_PConcRelatedHeaders);
 	p_UI->tableViewPConc->setColumnHidden(4, true);
 	// Загрузка настроек.
 	up_WidgetsSerializer = std::make_unique<WidgetsSerializer>(*p_Settings);
@@ -137,6 +166,8 @@ gFE:		Log(up_Logger, LogCat::E, "Невозможно создать файл б
 		Log(up_Logger, LogCat::I, "Файл настроек применён.", 2);
 	}
 	LogS(up_Logger, LogCat::I, "База данных [" << strDBName.toStdString() << "] подключена.", 2);
+	// Инициализация меню.
+	oMenuNewLesson.addAction(m_chMenuNewLessonRow)->setData(MENU_NEW_LESSON_ROW);
 	// Завершение.
 	ST("Готов.");
 }
@@ -199,5 +230,28 @@ void MainWindow::on_actionAbout_triggered() { oDialogAbout.exec(); }
 void MainWindow::on_actionSettings_triggered()
 {
 	if(CancelableDialogExec(oDialogSettings)) ApplySettingsDialogValues();
+}
+
+// При вызове контекстного меню на таблице понедельника.
+void MainWindow::on_tableViewTimetablePon_customContextMenuRequested(const QPoint& r_Pos)
+{
+	QModelIndex oMIndex = p_UI->tableViewTimetablePon->indexAt(r_Pos);
+	int iCol = oMIndex.column();
+	int iRow = oMIndex.row();
+	if((iCol == -1) || (iRow == -1))
+	{
+		QAction* p_SelectedMenuItem = oMenuNewLesson.exec(QCursor::pos());
+		if(p_SelectedMenuItem != 0)
+		{
+			switch(p_SelectedMenuItem->data().toUInt())
+			{
+				case MENU_NEW_LESSON_ROW:
+				{
+
+					break;
+				}
+			}
+		}
+	}
 }
 

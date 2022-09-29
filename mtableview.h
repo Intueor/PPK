@@ -98,6 +98,7 @@ public:
 	/// Удаление зависимого виджета вида заголовка таблицы.
 	void RemoveRelatedHorizontalHeaderView(MHorizontalHeaderView* p_MHorizontalHeaderViewRelated);
 													///< \param[in] p_MHorizontalHeaderViewRelated Указатель на виджет вида заголовка таблицы.
+
 };
 
 #endif // MTABLEVIEW_H

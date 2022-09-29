@@ -18,10 +18,13 @@
 #include <QSqlDatabase>
 #include <QFile>
 #include <QSqlRelationalTableModel>
+#include <QMenu>
+#include <QMouseEvent>
 
 //== МАКРОСЫ.
 //! \file mainwindow.h
 #define SETTINGS_NAME	"settings.ini" ///< Имя файла настроек.
+#define STATUS_SHOW_TIME_MS	3000 ///< Время демонстрации статуса.
 
 //== ПРОСТРАНСТВА ИМЁН.
 QT_BEGIN_NAMESPACE
@@ -29,6 +32,29 @@ namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
 //== КЛАССЫ.
+/// Класс модифицированного меню.
+class SafeMenu : public QMenu
+{
+	Q_OBJECT
+
+public:
+	/// Конструктор.
+	SafeMenu(QWidget* p_Parent = nullptr) : QMenu(p_Parent)
+													///< \param[in] p_Parent Указатель на родительский объект.
+	{}
+
+public slots:
+	/// Переопределение функции обработки нажатия мыши.
+	void mousePressEvent(QMouseEvent* p_Event);
+													///< \param[in] p_Event Указатель на событие.
+	/// Переопределение функции обработки перемещения мыши.
+	void mouseMoveEvent(QMouseEvent* p_Event);
+													///< \param[in] p_Event Указатель на событие.
+	/// Переопределение функции обработки отпускания мыши.
+	void mouseReleaseEvent(QMouseEvent* p_Event);
+													///< \param[in] p_Event Указатель на событие.
+};
+
 /// Класс главного окна.
 class MainWindow : public QMainWindow
 {
@@ -60,15 +86,16 @@ private:
 	QSqlDatabase oDB; ///< Интерфейс базы данных.
 	const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType> mpSchedColsDataTypes = {{1, MSqlRelationalDelegate::CustomDelegateType::FormattedTime}}; ///< Типы данных делегата сетки занятий.
 	const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType> mpLenColsDataTypes = {{1, MSqlRelationalDelegate::CustomDelegateType::Positive}}; ///< Типы данных делегата длин занятий.
+	SafeMenu oMenuNewLesson; ///< Объект меню нового урока.
 
 private:
 	/// Приминение значений из диалога настроек.
 	void ApplySettingsDialogValues();
 	/// Инициализация вида и модели таблицы.
-	QSqlRelationalTableModel* InitTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter = "", bool bCanScroll = true, int iColumnForSort = 0,
-										bool bStretchLastHSection = false, const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType>* const p_mpColumnsDataTypes = nullptr,
-										std::vector<MTableView*>* const p_v_p_InfluencingTableViews = nullptr, std::vector<ColumnRelation>* const p_vColumnsRelations = nullptr,
-										std::vector<MHorizontalHeaderView*>* const p_v_p_MHorizontalHeaderViewsRelated = nullptr);
+	QSqlRelationalTableModel* InitMTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter = "", bool bCanScroll = true, int iColumnForSort = 0,
+										 bool bStretchLastHSection = false, const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType>* const p_mpColumnsDataTypes = nullptr,
+										 std::vector<MTableView*>* const p_v_p_InfluencingTableViews = nullptr, std::vector<ColumnRelation>* const p_vColumnsRelations = nullptr,
+										 std::vector<MHorizontalHeaderView*>* const p_v_p_MHorizontalHeaderViewsRelated = nullptr);
 													///< \param[in] p_Parent Указатель на родительский объект.
 													///< \param[in] r_strTableName Ссылка на конст. строку с именем таблицы.
 													///< \param[in] p_MTableView Указатель на виджет вида таблицы.
@@ -93,6 +120,9 @@ private slots:
 
 	/// Обработка пункта "Настройки".
 	void on_actionSettings_triggered();
+	/// При вызове контекстного меню на таблице понедельника.
+	void on_tableViewTimetablePon_customContextMenuRequested(const QPoint& r_Pos);
+													///< \param[in] r_Pos Точка клика.
 };
 
 #endif // MAINWINDOW_H

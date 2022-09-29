@@ -1,6 +1,6 @@
 QT += core gui widgets sql
 
-CONFIG += c++14
+CONFIG += c++20
 
 win32 {
 	LIBS += ..\\PPK\\pthread\\lib\\pthread_static_lib.lib
