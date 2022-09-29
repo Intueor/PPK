@@ -264,6 +264,18 @@ void MainWindow::on_tableViewTimetablePon_customContextMenuRequested(const QPoin
 						LogS(up_Logger, LogCat::I, "Добавлена запись в ДБ.", 2);
 						p_QSqlRelationalTableModel->submitAll();
 						oDB.commit();
+
+						p_UI->tableViewTimetablePon->AdjustVerticalSize();
+						p_UI->tableViewTimetablePon->AdjustVerticalSize();
+
+//						int iH = p_UI->tableViewTimetablePon->height();
+//						iH += p_UI->tableViewTimetablePon->rowHeight(0);
+
+//						p_UI->tableViewTimetablePon->setFixedHeight(iH);
+
+
+//						p_UI->tableViewTimetablePon->setFixedHeight(iH);
+
 					}
 					else oDB.rollback();
 					break;

@@ -72,28 +72,31 @@ void MTableView::AntiSpamTimerSlot()
 	bStartupSpamIsOver = true;
 }
 
+// Выравнивание высоты вида таблицы по содержимому.
+void MTableView::AdjustVerticalSize(uchar uchBottomFreeSpace)
+{
+	int iRQ = 0;
+	int iAllRowsHeight = 0;
+	QAbstractItemModel* p_Model = model();
+	if(p_Model)
+	{
+		iRQ = p_Model->rowCount();
+		if(iLastRQ != iRQ)
+		{
+			for(int iCurRow = 0; iCurRow < iRQ; iCurRow++)
+			{
+				iAllRowsHeight += rowHeight(iCurRow);
+			}
+			iLastRQ = iRQ;
+			setFixedHeight(iAllRowsHeight + horizontalHeader()->height() + uchBottomFreeSpace);
+		}
+	}
+}
+
 // Переопределение обновления геометрии для авторасширения без вертикального скроллинга.
 void MTableView::updateGeometries()
 {
-	if(!_bCanScroll)
-	{
-		int iRQ = 0;
-		int iAllRowsHeight = 0;
-		QAbstractItemModel* p_Model = model();
-		if(p_Model)
-		{
-			iRQ = p_Model->rowCount();
-			if(iLastRQ != iRQ)
-			{
-				for(int iCurRow = 0; iCurRow < iRQ; iCurRow++)
-				{
-					iAllRowsHeight += rowHeight(iCurRow);
-				}
-				iLastRQ = iRQ;
-				setFixedHeight(iAllRowsHeight + horizontalHeader()->height() + verticalHeader()->height());
-			}
-		}
-	}
+	if(!_bCanScroll) AdjustVerticalSize();
 	if(bStartupSpamIsOver)
 	{
 		if(model() && bOverridedStretchLastSection)

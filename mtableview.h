@@ -11,6 +11,7 @@
 //== МАКРОСЫ.
 //! \file mtableview.h
 #define STARTUP_UPDATE_ANTISPAM_DELAY_MS			100 ///< Величина задержки антиспама стартовых обновлений геометрии.
+#define BOTTOM_FREE_SPACE_PX						22 ///< Размер отступа снизу от строк таблицы.
 
 //== КЛАССЫ.
 /// Класс модифицированного заголовка виджета вида таблицы.
@@ -73,6 +74,9 @@ public:
 	/// Конструктор.
 	explicit MTableView(QWidget* p_Parent = nullptr);
 													///< \param[in] p_Parent Указатель на родительский виджет.
+	/// Выравнивание высоты вида таблицы по содержимому.
+	void AdjustVerticalSize(uchar uchBottomFreeSpace = BOTTOM_FREE_SPACE_PX);
+													///< \param[in] uchBottomFreeSpace Размер отступа снизу от строк таблицы.
 	/// Перезагрузка зависимых видов таблиц.
 	void UpdateRelatedTableViews();
 	/// Установка колонки для автосортировки или 0.
