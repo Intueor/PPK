@@ -18,7 +18,7 @@ QWidget* MSqlRelationalDelegate::createEditor(QWidget* p_Parent, const QStyleOpt
 {
 	const QSqlRelationalTableModel* p_SqlModel = qobject_cast<const QSqlRelationalTableModel *>(r_Index.model());
 	QSqlTableModel* p_ChildModel = p_SqlModel ? p_SqlModel->relationModel(r_Index.column()) : nullptr;
-	if(!p_ChildModel) return QStyledItemDelegate::createEditor(p_Parent, r_Option, r_Index);
+	if(!p_ChildModel) return QSqlRelationalDelegate::createEditor(p_Parent, r_Option, r_Index);
 	p_ChildModel->sort(1, Qt::SortOrder::AscendingOrder);
 	const QSqlDriver* const p_Driver = p_ChildModel->database().driver();
 	QComboBox* p_Combo = new QComboBox(p_Parent);

@@ -288,7 +288,7 @@ void WidgetsSerializer::SaveStates(const T& r_Widget, bool bIncludeMainGeometry)
 			strColls += QString::number(iWidth);
 			strColls += ",";
 		}
-		if(!strColls.isEmpty()) strColls.erase(strColls.end() - 1, strColls.end());
+		if(!strColls.isEmpty()) strColls.remove(strColls.length() - 1, 1);
 		_r_Settings.setValue(MkChildName(strWName, p_MTableView->objectName(), "C"), strColls);
 	}
 	// Другие требуемые типы...

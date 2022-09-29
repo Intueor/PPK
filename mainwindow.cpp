@@ -3,6 +3,8 @@
 #include "ui_mainwindow.h"
 #include "ui_dialog-settings.h"
 #include <QSqlError>
+#include <QSqlRecord>
+#include <QSqlQuery>
 
 //== МАКРОСЫ И КОНСТАНТЫ.
 #define ST(m)				oLabelStatus.setText(m)
@@ -19,8 +21,8 @@ using namespace rapidxml;
 // Переопределение функции обработки нажатия мыши.
 void SafeMenu::mousePressEvent(QMouseEvent* p_Event)
 {
-	if((p_Event->button() == Qt::MouseButton::RightButton) &
-	   ((p_Event->pos().x() > pos().x()) & (p_Event->pos().y() > pos().y())))
+	if((p_Event->button() == Qt::MouseButton::RightButton) &&
+	   ((p_Event->pos().x() > pos().x()) && (p_Event->pos().y() > pos().y())))
 	{
 		return;
 	}
@@ -142,11 +144,11 @@ gFE:		Log(up_Logger, LogCat::E, "Невозможно создать файл б
 	// Инициализация вида и модели предметов.
 	InitMTable(this, "Предметы", p_UI->tableViewDisciplines, "", false, 0, true);
 	// Инициализация вида и модели контингента спец.
-	std::vector<MHorizontalHeaderView*> v_p_PPrepRelatedHeaders = {{static_cast<MHorizontalHeaderView*>(p_UI->tableViewPConc->horizontalHeader())}};
+	std::vector<MHorizontalHeaderView*> v_p_PPrepRelatedHeaders = {static_cast<MHorizontalHeaderView*>(p_UI->tableViewPConc->horizontalHeader())};
 	InitMTable(this, "Контингент", p_UI->tableViewPPrep, strTypePref + "0", false, 0, true, nullptr, nullptr, nullptr, &v_p_PPrepRelatedHeaders);
 	p_UI->tableViewPPrep->setColumnHidden(4, true);
 	// Инициализация вида и модели контингента конц.
-	std::vector<MHorizontalHeaderView*> v_p_PConcRelatedHeaders = {{static_cast<MHorizontalHeaderView*>(p_UI->tableViewPPrep->horizontalHeader())}};
+	std::vector<MHorizontalHeaderView*> v_p_PConcRelatedHeaders = {static_cast<MHorizontalHeaderView*>(p_UI->tableViewPPrep->horizontalHeader())};
 	InitMTable(this, "Контингент", p_UI->tableViewPConc, strTypePref + "1", false, 0, true, nullptr, nullptr, nullptr, &v_p_PConcRelatedHeaders);
 	p_UI->tableViewPConc->setColumnHidden(4, true);
 	// Загрузка настроек.
@@ -247,7 +249,23 @@ void MainWindow::on_tableViewTimetablePon_customContextMenuRequested(const QPoin
 			{
 				case MENU_NEW_LESSON_ROW:
 				{
-
+					QSqlRelationalTableModel* p_QSqlRelationalTableModel = static_cast<QSqlRelationalTableModel*>(p_UI->tableViewTimetablePon->model());
+					oDB.transaction();
+					QSqlRecord oQSqlRecord = p_QSqlRelationalTableModel->record();
+					oQSqlRecord.remove(oQSqlRecord.indexOf("ключ"));
+					oQSqlRecord.setValue(0, "понедельник");
+					oQSqlRecord.setValue(1, 1);
+					oQSqlRecord.setValue(2, 1);
+					oQSqlRecord.setValue(3, 1);
+					oQSqlRecord.setValue(4, "каб. ");
+					oQSqlRecord.setValue(5, 1);
+					if(p_QSqlRelationalTableModel->insertRecord(p_QSqlRelationalTableModel->rowCount(QModelIndex()), oQSqlRecord))
+					{
+						LogS(up_Logger, LogCat::I, "Добавлена запись в ДБ.", 2);
+						p_QSqlRelationalTableModel->submitAll();
+						oDB.commit();
+					}
+					else oDB.rollback();
 					break;
 				}
 			}
