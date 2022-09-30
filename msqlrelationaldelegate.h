@@ -14,12 +14,14 @@ public:
 	/// Перечисление типов делегатов по виду данных.
 	enum CustomDelegateType
 	{
-		Positive,
-		FormattedTime
+		PositiveNotNull,
+		FormattedTime,
+		StringNotEmpty
 	};
 
 private:
 	const std::map<uchar, CustomDelegateType>* const _p_mpColumnsDataTypes; ///< Внутренний константный указатель на константную карту 'колонка в тип данных'.
+	const std::map<uchar, QString>* const _p_mpColumnsFilters; ///< Внутренний константный указатель на константную карту 'колонка в фильтр'.
 
 private:
 	/// Копия приватной функции получения индекса поля из базового класса.
@@ -30,10 +32,12 @@ private:
 														///< \return Индекс.
 public:
 	/// Конструктор.
-	explicit MSqlRelationalDelegate(QObject* p_Parent = nullptr, const std::map<uchar, CustomDelegateType>* const p_mpColumnsDataTypes = nullptr)
-		: QSqlRelationalDelegate(p_Parent), _p_mpColumnsDataTypes(p_mpColumnsDataTypes)
+	explicit MSqlRelationalDelegate(QObject* p_Parent = nullptr, const std::map<uchar, CustomDelegateType>* const p_mpColumnsDataTypes = nullptr,
+									const std::map<uchar, QString>* const p_mpColumnsFilters = nullptr)
+		: QSqlRelationalDelegate(p_Parent), _p_mpColumnsDataTypes(p_mpColumnsDataTypes), _p_mpColumnsFilters(p_mpColumnsFilters)
 														///< \param[in] p_Parent Указатель на родительский объект.
 														///< \param[in] p_mpColumnsDataTypes Константный указатель на константную карту 'колонка в тип данных'.
+														///< \param[in] p_mpColumnsFilters Константный указатель на константную карту 'колонка в фильтр'.
 	{}
 	/// Переопределённая функция создания редактора для подстановки сортировки в комбо.
 	QWidget* createEditor(QWidget* p_Parent, const QStyleOptionViewItem& r_Option, const QModelIndex& r_Index) const override;

@@ -16,7 +16,7 @@ int MSqlRelationalDelegate::fieldIndex(const QSqlTableModel* const p_Model, cons
 // Переопределённая функция создания редактора для подстановки сортировки в комбо.
 QWidget* MSqlRelationalDelegate::createEditor(QWidget* p_Parent, const QStyleOptionViewItem& r_Option, const QModelIndex& r_Index) const
 {
-	const QSqlRelationalTableModel* p_SqlModel = qobject_cast<const QSqlRelationalTableModel *>(r_Index.model());
+	const QSqlRelationalTableModel* p_SqlModel = qobject_cast<const QSqlRelationalTableModel*>(r_Index.model());
 	QSqlTableModel* p_ChildModel = p_SqlModel ? p_SqlModel->relationModel(r_Index.column()) : nullptr;
 	if(!p_ChildModel) return QSqlRelationalDelegate::createEditor(p_Parent, r_Option, r_Index);
 	p_ChildModel->sort(1, Qt::SortOrder::AscendingOrder);
@@ -24,7 +24,20 @@ QWidget* MSqlRelationalDelegate::createEditor(QWidget* p_Parent, const QStyleOpt
 	QComboBox* p_Combo = new QComboBox(p_Parent);
 	p_Combo->setModel(p_ChildModel);
 	p_Combo->setModelColumn(fieldIndex(p_ChildModel, p_Driver, p_SqlModel->relation(r_Index.column()).displayColumn()));
-	p_Combo->installEventFilter(const_cast<MSqlRelationalDelegate *>(this));
+	// Установка фильтра из карты по колонке индекса.
+	if(_p_mpColumnsFilters)
+	{
+		int iICol = r_Index.column();
+		for(const auto& r_prType : *_p_mpColumnsFilters)
+		{
+			if(r_prType.first == iICol)
+			{
+				p_ChildModel->setFilter(r_prType.second);
+				break;
+			}
+		}
+	}
+	p_Combo->installEventFilter(const_cast<MSqlRelationalDelegate*>(this));
 	return p_Combo;
 }
 
@@ -32,12 +45,13 @@ QWidget* MSqlRelationalDelegate::createEditor(QWidget* p_Parent, const QStyleOpt
 void MSqlRelationalDelegate::setModelData(QWidget* p_Editor, QAbstractItemModel* p_Model, const QModelIndex& r_Index) const
 {
 	QLineEdit* p_LineEdit = qobject_cast<QLineEdit*>(p_Editor);
-	if(p_LineEdit &&  _p_mpColumnsDataTypes)
+	if(p_LineEdit && _p_mpColumnsDataTypes)
 	{
 		QString strText = p_LineEdit->text();
+		int iICol = r_Index.column();
 		for(const auto& r_prType : *_p_mpColumnsDataTypes)
 		{
-			if(r_prType.first == r_Index.column())
+			if(r_prType.first == iICol)
 			{
 				switch(r_prType.second)
 				{
@@ -58,12 +72,18 @@ void MSqlRelationalDelegate::setModelData(QWidget* p_Editor, QAbstractItemModel*
 						p_LineEdit->setText(strH + ':' + strM);
 						break;
 					}
-					case CustomDelegateType::Positive:
+					case CustomDelegateType::PositiveNotNull:
 					{
-						if(strText.toInt() < 0) return;
+						if(strText.toInt() <= 0) return;
+						break;
+					}
+					case CustomDelegateType::StringNotEmpty:
+					{
+						if(strText.isEmpty()) return;
 						break;
 					}
 				}
+				break;
 			}
 		}
 

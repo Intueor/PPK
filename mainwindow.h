@@ -85,7 +85,8 @@ private:
 	QFile oDbFile; ///< Интерфейс для работы с файлом базы данных.
 	QSqlDatabase oDB; ///< Интерфейс базы данных.
 	const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType> mpSchedColsDataTypes = {{1, MSqlRelationalDelegate::CustomDelegateType::FormattedTime}}; ///< Типы данных делегата сетки занятий.
-	const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType> mpLenColsDataTypes = {{1, MSqlRelationalDelegate::CustomDelegateType::Positive}}; ///< Типы данных делегата длин занятий.
+	const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType> mpLenColsDataTypes = {{1, MSqlRelationalDelegate::CustomDelegateType::PositiveNotNull}}; ///< Типы данных делегата длин занятий.
+	const std::map<uchar, QString> mpTimeTableColsFilters = {{2, "Время != ''"}, {3, "Имя != ''"}, {4, "Предмет != ''"}, {6, "Длина > 0"}}; ///< Фильтры всех делегатов расписания.
 	SafeMenu oMenuNewLesson; ///< Объект меню нового урока.
 
 private:
@@ -94,6 +95,7 @@ private:
 	/// Инициализация вида и модели таблицы.
 	QSqlRelationalTableModel* InitMTable(QObject* p_Parent, const QString& r_strTableName, MTableView* p_MTableView, const QString& r_strFilter = "", bool bCanScroll = true, int iColumnForSort = 0,
 										 bool bStretchLastHSection = false, const std::map<uchar, MSqlRelationalDelegate::CustomDelegateType>* const p_mpColumnsDataTypes = nullptr,
+										 const std::map<uchar, QString>* const p_mpColumnsFilters = nullptr,
 										 std::vector<MTableView*>* const p_v_p_InfluencingTableViews = nullptr, std::vector<ColumnRelation>* const p_vColumnsRelations = nullptr,
 										 std::vector<MHorizontalHeaderView*>* const p_v_p_MHorizontalHeaderViewsRelated = nullptr);
 													///< \param[in] p_Parent Указатель на родительский объект.
@@ -104,9 +106,15 @@ private:
 													///< \param[in] iColumnForSort 0 - для отсутствия сортировки или номер колонки.
 													///< \param[in] bStretchLastHSection true - для переопределённого растяжения последней видимой секции горизонтального заголовка.
 													///< \param[in] p_mpColumnsDataTypes Константный указатель на константную карту 'колонка в тип данных' или nullptr.
+													///< \param[in] p_mpColumnsFilters Константный указатель на константную карту 'колонка в фильтр'.
 													///< \param[in] p_v_p_InfluencingTableViews Константный ук. на вектор указателей на виджеты вида таблиц, которые могут менять контент текущего виджета вида.
 													///< \param[in] p_vColumnsRelations Константный указатель на вектор стрктур, описывающих отношение столбцов таблицы к столбцам других.
 													///< \param[in] p_v_p_MHorizontalHeaderViewsRelated Константный указатель на вектор указателей на зависимые виджеты вида заголовков окон.
+	/// Добавление урока в БД.
+	void AddLessonToDB(const QPoint& r_Pos, MTableView* p_MTableViewDay, const QString& r_strDayColName);
+													///< \param[in] r_Pos Точка клика.
+													///< \param[in] p_MTableView Указатель на виджет вида таблицы дня недели.
+													///< \param[in] r_strDayColName Константная ссылка на имя колонки дня недели.
 public:
 	/// Конструктор.
 	MainWindow(QWidget* p_WidgetParent = nullptr);
@@ -117,11 +125,25 @@ public:
 private slots:
 	/// Обработка пункта "О программе".
 	void on_actionAbout_triggered();
-
 	/// Обработка пункта "Настройки".
 	void on_actionSettings_triggered();
 	/// При вызове контекстного меню на таблице понедельника.
 	void on_tableViewTimetablePon_customContextMenuRequested(const QPoint& r_Pos);
+													///< \param[in] r_Pos Точка клика.
+	/// При вызове контекстного меню на таблице вторника.
+	void on_tableViewTimetableVtor_customContextMenuRequested(const QPoint& r_Pos);
+													///< \param[in] r_Pos Точка клика.
+	/// При вызове контекстного меню на таблице среды.
+	void on_tableViewTimetableSred_customContextMenuRequested(const QPoint& r_Pos);
+													///< \param[in] r_Pos Точка клика.
+	/// При вызове контекстного меню на таблице четверга.
+	void on_tableViewTimetableChetv_customContextMenuRequested(const QPoint& r_Pos);
+													///< \param[in] r_Pos Точка клика.
+	/// При вызове контекстного меню на таблице пятницы.
+	void on_tableViewTimetablePyatn_customContextMenuRequested(const QPoint& r_Pos);
+													///< \param[in] r_Pos Точка клика.
+	/// При вызове контекстного меню на таблице субботы.
+	void on_tableViewTimetableSubb_customContextMenuRequested(const QPoint& r_Pos);
 													///< \param[in] r_Pos Точка клика.
 };
 
