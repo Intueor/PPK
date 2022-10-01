@@ -234,8 +234,35 @@ void MainWindow::on_actionSettings_triggered()
 	if(CancelableDialogExec(oDialogSettings)) ApplySettingsDialogValues();
 }
 
-/// Добавление урока в БД.
-void MainWindow::AddLessonToDB(const QPoint& r_Pos, MTableView* p_MTableViewDay, const QString& r_strDayColName)
+// Добавление записи в БД и таблицу.
+bool MainWindow::AddRecord(MTableView* p_MTableView, const QString& r_strKeyNameForRemove, const std::map<uchar, QVariant>* const p_mpColumnsData)
+{
+	QSqlRelationalTableModel* p_QSqlRelationalTableModel = static_cast<QSqlRelationalTableModel*>(p_MTableView->model());
+	oDB.transaction();
+	QSqlRecord oQSqlRecord = p_QSqlRelationalTableModel->record();
+	if(!r_strKeyNameForRemove.isEmpty()) oQSqlRecord.remove(oQSqlRecord.indexOf(r_strKeyNameForRemove));
+	for(auto& r_prData : *p_mpColumnsData)
+	{
+		oQSqlRecord.setValue(r_prData.first, r_prData.second);
+	}
+	int iH = p_MTableView->verticalHeader()->width();
+	if(p_QSqlRelationalTableModel->insertRecord(p_QSqlRelationalTableModel->rowCount(QModelIndex()), oQSqlRecord))
+	{
+		p_QSqlRelationalTableModel->submitAll();
+		oDB.commit();
+		p_MTableView->AdjustVerticalSize();
+		p_MTableView->setColumnWidth(2, p_MTableView->columnWidth(2) + (iH - p_MTableView->verticalHeader()->width()));
+		return true;
+	}
+	else
+	{
+		oDB.rollback();
+		return false;
+	}
+}
+
+// Добавление урока в БД и таблицу.
+void MainWindow::AddLesson(const QPoint& r_Pos, MTableView* p_MTableViewDay, const QString& r_strDayColName)
 {
 	QModelIndex oMIndex = p_MTableViewDay->indexAt(r_Pos);
 	int iCol = oMIndex.column();
@@ -249,24 +276,8 @@ void MainWindow::AddLessonToDB(const QPoint& r_Pos, MTableView* p_MTableViewDay,
 			{
 				case MENU_NEW_LESSON_ROW:
 				{
-					QSqlRelationalTableModel* p_QSqlRelationalTableModel = static_cast<QSqlRelationalTableModel*>(p_MTableViewDay->model());
-					oDB.transaction();
-					QSqlRecord oQSqlRecord = p_QSqlRelationalTableModel->record();
-					oQSqlRecord.remove(oQSqlRecord.indexOf("ключ"));
-					oQSqlRecord.setValue(0, r_strDayColName);
-					oQSqlRecord.setValue(1, 1);
-					oQSqlRecord.setValue(2, 1);
-					oQSqlRecord.setValue(3, 1);
-					oQSqlRecord.setValue(4, "");
-					oQSqlRecord.setValue(5, 1);
-					if(p_QSqlRelationalTableModel->insertRecord(p_QSqlRelationalTableModel->rowCount(QModelIndex()), oQSqlRecord))
-					{
-						LogS(up_Logger, LogCat::I, "Добавлена запись урока в ДБ.", 2);
-						p_QSqlRelationalTableModel->submitAll();
-						oDB.commit();
-						p_MTableViewDay->AdjustVerticalSize();
-					}
-					else oDB.rollback();
+					std::map<uchar, QVariant> mpNewLessonColumnsData = {{0, r_strDayColName}, {1, 1}, {2, 1}, {3, 1}, {4, ""}, {5, 1}};
+					if(AddRecord(p_MTableViewDay, "ключ", &mpNewLessonColumnsData)) LogS(up_Logger, LogCat::I, "Добавлена запись в ДБ.", 2);
 					break;
 				}
 			}
@@ -277,35 +288,35 @@ void MainWindow::AddLessonToDB(const QPoint& r_Pos, MTableView* p_MTableViewDay,
 // При вызове контекстного меню на таблице понедельника.
 void MainWindow::on_tableViewTimetablePon_customContextMenuRequested(const QPoint& r_Pos)
 {
-	AddLessonToDB(r_Pos, p_UI->tableViewTimetablePon, "понедельник");
+	AddLesson(r_Pos, p_UI->tableViewTimetablePon, "понедельник");
 }
 
 // При вызове контекстного меню на таблице вторника.
 void MainWindow::on_tableViewTimetableVtor_customContextMenuRequested(const QPoint& r_Pos)
 {
-	AddLessonToDB(r_Pos, p_UI->tableViewTimetableVtor, "вторник");
+	AddLesson(r_Pos, p_UI->tableViewTimetableVtor, "вторник");
 }
 
 // При вызове контекстного меню на таблице среды.
 void MainWindow::on_tableViewTimetableSred_customContextMenuRequested(const QPoint& r_Pos)
 {
-	AddLessonToDB(r_Pos, p_UI->tableViewTimetableSred, "среда");
+	AddLesson(r_Pos, p_UI->tableViewTimetableSred, "среда");
 }
 
 // При вызове контекстного меню на таблице четверга.
 void MainWindow::on_tableViewTimetableChetv_customContextMenuRequested(const QPoint& r_Pos)
 {
-	AddLessonToDB(r_Pos, p_UI->tableViewTimetableChetv, "четверг");
+	AddLesson(r_Pos, p_UI->tableViewTimetableChetv, "четверг");
 }
 
 // При вызове контекстного меню на таблице пятницы.
 void MainWindow::on_tableViewTimetablePyatn_customContextMenuRequested(const QPoint& r_Pos)
 {
-	AddLessonToDB(r_Pos, p_UI->tableViewTimetablePyatn, "пятница");
+	AddLesson(r_Pos, p_UI->tableViewTimetablePyatn, "пятница");
 }
 
 // При вызове контекстного меню на таблице субботы.
 void MainWindow::on_tableViewTimetableSubb_customContextMenuRequested(const QPoint& r_Pos)
 {
-	AddLessonToDB(r_Pos, p_UI->tableViewTimetableSubb, "суббота");
+	AddLesson(r_Pos, p_UI->tableViewTimetableSubb, "суббота");
 }

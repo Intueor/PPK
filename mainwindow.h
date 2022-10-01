@@ -110,10 +110,15 @@ private:
 													///< \param[in] p_v_p_InfluencingTableViews Константный ук. на вектор указателей на виджеты вида таблиц, которые могут менять контент текущего виджета вида.
 													///< \param[in] p_vColumnsRelations Константный указатель на вектор стрктур, описывающих отношение столбцов таблицы к столбцам других.
 													///< \param[in] p_v_p_MHorizontalHeaderViewsRelated Константный указатель на вектор указателей на зависимые виджеты вида заголовков окон.
-	/// Добавление урока в БД.
-	void AddLessonToDB(const QPoint& r_Pos, MTableView* p_MTableViewDay, const QString& r_strDayColName);
+	/// Добавление записи в БД.
+	bool AddRecord(MTableView* p_MTableView, const QString& r_strKeyNameForRemove, const std::map<uchar, QVariant>* const p_mpColumnsData);
+													///< \param[in] p_MTableView Указатель на виджет вида таблицы.
+													///< \param[in] r_strKeyNameForRemove Константная ссылка на имя колонки ключа для удаления (при необходимости).
+													///< \param[in] p_mpColumnsData Константный указатель на константную карту 'колонка в данные'.
+	/// Добавление урока в БД и таблицу.
+	void AddLesson(const QPoint& r_Pos, MTableView* p_MTableViewDay, const QString& r_strDayColName);
 													///< \param[in] r_Pos Точка клика.
-													///< \param[in] p_MTableView Указатель на виджет вида таблицы дня недели.
+													///< \param[in] p_MTableViewDay Указатель на виджет вида таблицы дня недели.
 													///< \param[in] r_strDayColName Константная ссылка на имя колонки дня недели.
 public:
 	/// Конструктор.
