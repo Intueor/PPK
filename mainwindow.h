@@ -39,8 +39,9 @@ class SafeMenu : public QMenu
 
 public:
 	/// Конструктор.
-	SafeMenu(QWidget* p_Parent = nullptr) : QMenu(p_Parent)
+	SafeMenu(QWidget* p_Parent = nullptr)
 													///< \param[in] p_Parent Указатель на родительский объект.
+									: QMenu(p_Parent)
 	{}
 
 public slots:
@@ -110,11 +111,13 @@ private:
 													///< \param[in] p_v_p_InfluencingTableViews Константный ук. на вектор указателей на виджеты вида таблиц, которые могут менять контент текущего виджета вида.
 													///< \param[in] p_vColumnsRelations Константный указатель на вектор стрктур, описывающих отношение столбцов таблицы к столбцам других.
 													///< \param[in] p_v_p_MHorizontalHeaderViewsRelated Константный указатель на вектор указателей на зависимые виджеты вида заголовков окон.
+													///< \return Ссылка на модель таблицы.
 	/// Добавление записи в БД.
 	bool AddRecord(MTableView* p_MTableView, const QString& r_strKeyNameForRemove, const std::map<uchar, QVariant>* const p_mpColumnsData);
 													///< \param[in] p_MTableView Указатель на виджет вида таблицы.
 													///< \param[in] r_strKeyNameForRemove Константная ссылка на имя колонки ключа для удаления (при необходимости).
 													///< \param[in] p_mpColumnsData Константный указатель на константную карту 'колонка в данные'.
+													///< \return true при успехе.
 	/// Добавление урока в БД и таблицу.
 	void AddLesson(const QPoint& r_Pos, MTableView* p_MTableViewDay, const QString& r_strDayColName);
 													///< \param[in] r_Pos Точка клика.

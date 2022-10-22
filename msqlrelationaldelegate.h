@@ -28,7 +28,7 @@ private:
 	static int fieldIndex(const QSqlTableModel* const p_Model, const QSqlDriver* const p_Driver, const QString& r_strFieldName);
 														///< \param[in] p_Model Константный указатель на константный объект модели.
 														///< \param[in] p_Driver Константный указатель на константный объект драйвера.
-														///< \param[in] p_Driver Константная ссылка на строку с именем поля.
+														///< \param[in] r_strFieldName Константная ссылка на строку с именем поля.
 														///< \return Индекс.
 public:
 	/// Конструктор.

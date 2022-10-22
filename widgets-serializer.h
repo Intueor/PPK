@@ -84,8 +84,9 @@ private:
 
 public:
 	/// Конструктор.
-	WidgetsSerializer(QSettings& r_Settings) : _r_Settings(r_Settings)
+	WidgetsSerializer(QSettings& r_Settings)
 										///< \param[in] r_Settings Ссылка на настройки.
+										: _r_Settings(r_Settings)
 	{}
 	/// Регистрация дочерних элементов виджета.
 	template <typename T>
