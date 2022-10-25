@@ -131,28 +131,7 @@ void MTableView::UpdateRelatedTableViews()
 {
 	for(auto p_MTableView : v_p_MTableViewsRelated)
 	{
-		QSqlRelationalTableModel* p_QSqlRelationalTableModel = static_cast<QSqlRelationalTableModel*>(p_MTableView->model());
-		QString strTableName = p_QSqlRelationalTableModel->tableName();
-		QString strFilter = p_QSqlRelationalTableModel->filter();
-		std::vector<QSqlRelation> vRelations;
-		for(int iC = 0; iC < p_QSqlRelationalTableModel->columnCount(); iC++) vRelations.push_back(p_QSqlRelationalTableModel->relation(iC));
-		delete p_QSqlRelationalTableModel;
-		p_QSqlRelationalTableModel = new QSqlRelationalTableModel(this);
-		p_QSqlRelationalTableModel->setTable(strTableName);
-		p_QSqlRelationalTableModel->setEditStrategy(QSqlTableModel::OnFieldChange);
-		p_QSqlRelationalTableModel->setFilter(strFilter);
-		p_MTableView->setModel(p_QSqlRelationalTableModel);
-		for(int iC = 0; iC < p_QSqlRelationalTableModel->columnCount(); iC++)
-		{
-			if(vRelations.begin()->isValid()) p_QSqlRelationalTableModel->setRelation(iC, *vRelations.begin());
-			vRelations.erase(vRelations.begin());
-		}
-		p_MTableView->setItemDelegate(new MSqlRelationalDelegate(p_QSqlRelationalTableModel));
-		if(p_MTableView->_iColumnForSort)
-		{
-			p_MTableView->sortByColumn(p_MTableView->_iColumnForSort, Qt::AscendingOrder);
-		}
-		p_QSqlRelationalTableModel->select();
+		p_MTableView->commitData(nullptr);
 	}
 	if(_iColumnForSort)
 	{
